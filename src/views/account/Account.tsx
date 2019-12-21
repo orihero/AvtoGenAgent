@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Switch} from 'react-native';
 import {colors} from '../../constants';
 import strings from '../../locales/strings';
@@ -12,7 +12,7 @@ import NewOrder from './NewOrder';
 interface AccountProps {
   navigation: any;
 }
-let demoOrder: OrderProps = {
+export let demoOrder: OrderProps = {
   properties: [
     {
       title: 'Дата посещения',
@@ -36,9 +36,11 @@ let demoOrder: OrderProps = {
 const Account = ({navigation}: AccountProps) => {
   const [isActive, setisActive] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
-  setTimeout(() => {
-    setIsOpen(true);
-  }, 5000);
+  useEffect(() => {
+    setTimeout(() => {
+      setIsOpen(true);
+    }, 5000);
+  }, []);
   let accept = () => {
     setIsOpen(false);
     navigation.navigate('Details', {item: demoOrder});
@@ -47,7 +49,7 @@ const Account = ({navigation}: AccountProps) => {
     setIsOpen(false);
   };
   return (
-    <View style={{flex: 1, backgroundColor: colors.ultraLightGray}}>
+    <View style={styles.wrapper}>
       <View style={styles.container}>
         <View style={styles.content}>
           <View style={styles.infoWrapper}>
@@ -76,12 +78,13 @@ const Account = ({navigation}: AccountProps) => {
           <NewOrder {...demoOrder} {...{accept, decline}} />
         </Modal>
       )}
-      <Header />
+      <Header menuPress={() => navigation.navigate('History')} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  wrapper: {flex: 1, backgroundColor: colors.ultraLightGray, paddingTop: 60},
   modalContent: {
     padding: 15,
   },
@@ -119,8 +122,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   content: {
-    marginTop: 90,
-    paddingBottom: 40,
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   nameText: {
     fontSize: 20,

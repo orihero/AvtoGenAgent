@@ -1,13 +1,6 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  Platform,
-  StatusBar,
-} from 'react-native';
-import {Icons, colors} from '../constants';
+import {View, Text, StyleSheet, Platform, StatusBar} from 'react-native';
+import {colors} from '../constants';
 import strings from '../locales/strings';
 import {HeaderBackButton} from 'react-navigation-stack';
 import SafeAreaView from 'react-native-safe-area-view';
@@ -23,7 +16,7 @@ const InnerHeader = ({
   navigation,
   back,
   transparent,
-  title = strings.settings,
+  title,
 }: InnerHeaderProps) => {
   return (
     <SafeAreaView
@@ -37,8 +30,11 @@ const InnerHeader = ({
           <HeaderBackButton
             tintColor={colors.darkGray}
             onPress={() => {
-              if (back) navigation.navigate(back);
-              else navigation.goBack();
+              if (back) {
+                navigation.navigate(back);
+              } else {
+                navigation.goBack();
+              }
             }}
           />
         </View>

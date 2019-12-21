@@ -15,6 +15,12 @@ export default new LocalizedStrings({
     ready: 'Готово',
     waiting: 'В ожидании',
     finished: 'Выполнен',
+    leaveComment: `Оставьте отзыв или пожелание, 
+это важно для улучшения сервиса`,
+    clientReview: 'Отзыв клиента',
+    myOrders: 'Мои заказы',
+    inWeek: 'За неделю',
+    inToday: 'За сегодня',
   },
   en: {},
 });

@@ -1,8 +1,7 @@
 import React from 'react';
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
-import {Account, Details} from '../views';
-import Header from '../components/Header';
+import {Account, Details, History} from '../views';
 import InnerHeader from '../components/InnerHeader';
 import strings from '../locales/strings';
 
@@ -12,7 +11,21 @@ let AccountStack = createStackNavigator(
     Details: {
       screen: Details,
       navigationOptions: {
-        header: props => <InnerHeader {...props} back={"Account"} title={strings.orderDetails} />,
+        header: props => (
+          <InnerHeader
+            {...props}
+            back={'Account'}
+            title={strings.orderDetails}
+          />
+        ),
+      },
+    },
+    History: {
+      screen: History,
+      navigationOptions: {
+        header: props => (
+          <InnerHeader {...props} back={'Account'} title={strings.myOrders} />
+        ),
       },
     },
   },

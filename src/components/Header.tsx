@@ -1,17 +1,16 @@
-import React, {useState, Fragment} from 'react';
+import React, {Fragment, useState} from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  TextInput,
-  Dimensions,
   Animated,
+  Dimensions,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
 } from 'react-native';
-import {Icons} from '../constants/icons';
 import {colors} from '../constants/colors';
+import {Icons} from '../constants/icons';
 import {isIphoneXorAbove} from '../utils/application';
-import {string} from 'prop-types';
 interface HeaderProps {
   text?: string;
   isBack?: boolean;

@@ -29,6 +29,7 @@ const NewOrder = ({properties, accept, decline}: NewOrderProps) => {
           flex
           textColor={colors.darkGray}
           borderColor={colors.extraGray}
+          backgroundColor={colors.extraGray}
           onPress={decline}
         />
         <RoundButton

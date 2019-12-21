@@ -1,11 +1,12 @@
 import React, {useState, Fragment} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, TextInput} from 'react-native';
 import UserInfo from '../../components/common/UserInfo';
 import {colors} from '../../constants';
 import {OrderProps} from '../account/OrderCard';
 import Property from '../../components/common/Property';
 import RoundButton from '../../components/common/RoundButton';
 import strings from '../../locales/strings';
+import Text from '../../components/common/CustomText';
 
 export enum OrderStatus {
   INITIAL = 0,
@@ -27,7 +28,9 @@ const Details = ({navigation}) => {
   let proceed = () => {
     setStatus(status + 1);
   };
-  let decline = () => {};
+  let decline = () => {
+    navigation.navigate('Account');
+  };
   let renderButtons = () => {
     switch (status) {
       case OrderStatus.INITIAL:
@@ -37,6 +40,7 @@ const Details = ({navigation}) => {
               text={strings.decline}
               full
               flex
+              backgroundColor={colors.extraGray}
               textColor={colors.darkGray}
               borderColor={colors.extraGray}
               onPress={decline}
@@ -73,6 +77,17 @@ const Details = ({navigation}) => {
             backgroundColor={colors.yellow}
           />
         );
+      case OrderStatus.FINISHED:
+        return (
+          <RoundButton
+            text={strings.ready}
+            fill
+            full
+            flex
+            onPress={proceed}
+            backgroundColor={colors.yellow}
+          />
+        );
       default:
         return null;
     }
@@ -85,6 +100,18 @@ const Details = ({navigation}) => {
           <Property {...e} key={i} />
         ))}
       </View>
+      {status === OrderStatus.FINISHED && (
+        <View style={styles.finishedWrapper}>
+          <Text style={styles.titleText}>{strings.clientReview}</Text>
+          <View style={styles.commentWrapper}>
+            <TextInput
+              multiline
+              numberOfLines={2}
+              placeholder={strings.leaveComment}
+            />
+          </View>
+        </View>
+      )}
       <View style={styles.buttonsContainer}>
         <View style={styles.buttonsWrapper}>{renderButtons()}</View>
       </View>
@@ -93,6 +120,11 @@ const Details = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  finishedWrapper: {
+    marginHorizontal: 30,
+    borderTopWidth: 1,
+    borderColor: colors.extraGray,
+  },
   contentContainer: {
     padding: 30,
   },
@@ -107,6 +139,20 @@ const styles = StyleSheet.create({
   buttonsWrapper: {
     flexDirection: 'row',
     paddingVertical: 30,
+  },
+  commentWrapper: {
+    borderRadius: 20,
+    backgroundColor: colors.white,
+    borderColor: colors.extraGray,
+    borderWidth: 1,
+    padding: 20,
+    marginVertical: 10,
+  },
+  titleText: {
+    fontSize: 18,
+    color: colors.accent,
+    fontWeight: '400',
+    marginVertical: 6,
   },
 });
 

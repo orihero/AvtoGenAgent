@@ -1,8 +1,7 @@
 import React from 'react';
-import {View, StyleSheet, Image} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 
 import {colors} from '../../constants/index';
-import Text from '../../components/common/CustomText';
 import Property, {PropertyProps} from '../../components/common/Property';
 import UserInfo from '../../components/common/UserInfo';
 import {OrderStatus} from '../order';
@@ -24,11 +23,13 @@ const OrderCard = ({user, properties}: OrderProps) => {
         <View style={styles.indicator} />
       </View>
       <UserInfo {...user} />
-      <View style={styles.properties}>
+      <ScrollView
+        style={styles.properties}
+        showsVerticalScrollIndicator={false}>
         {properties.map((e, key) =>
           e.price ? null : <Property {...e} {...{key}} />,
         )}
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -37,9 +38,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    borderRadius: 40,
+    borderRadius: 15,
     paddingHorizontal: 30,
     paddingVertical: 15,
+    marginVertical: 7.5,
   },
   indicator: {
     width: 40,
