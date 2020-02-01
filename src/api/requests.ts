@@ -5,12 +5,37 @@ const tempToken =
 
 export const URL = 'http://api.avtogen.qwertygroup.uz/';
 
+export let configureAxios = storeInstance => {
+  axios.interceptors.request.use(req => {
+    console.warn(storeInstance.getState());
+    req.headers = {
+      Authorization: `Bearer ${storeInstance.getState().user.token}`,
+    };
+    return req;
+  });
+};
+
+let formData = rawData => {
+  let form = new FormData();
+  Object.keys(rawData).forEach(key => {
+    form.append(key, rawData[key]);
+  });
+  return form;
+};
+
 let request = {
   profile: {
-    showProfile: (token = tempToken) =>
-      axios.get(`${URL}/profile/showCompany`, {
-        headers: {Authorization: `Bearer ${token}`},
-      }),
+    showProfile: () => axios.get(`${URL}/profile/showCompany`),
+  },
+  auth: {
+    login: credentials =>
+      axios.post(`${URL}/auth/login`, formData(credentials)),
+    verifyCode: (id, credentials) =>
+      axios.put(`${URL}/auth/login-verify/${id}`, credentials),
+  },
+  user: {
+    updateUser: credentials =>
+      axios.post(`${URL}/profile/update`, formData(credentials)),
   },
 };
 

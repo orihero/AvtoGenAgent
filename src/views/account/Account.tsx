@@ -10,6 +10,10 @@ import Header from '../../components/Header';
 import NewOrder from './NewOrder';
 import request from '../../api/requests';
 import YellowButton from '../../components/common/YellowButton';
+import RoundButton from '../../components/common/RoundButton';
+import {connect} from 'react-redux';
+import {userLoggedOut} from '../../redux/actions';
+import AsyncStorage from '@react-native-community/async-storage';
 
 interface AccountProps {
   navigation: any;
@@ -45,7 +49,7 @@ export let demoOrder: OrderProps = {
 //     console.warn(err);
 //   });
 
-const Account = ({navigation}: AccountProps) => {
+const AccountScreen = ({navigation, dispatch, user}: AccountProps) => {
   const [isActive, setisActive] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -55,17 +59,14 @@ const Account = ({navigation}: AccountProps) => {
     request.profile
       .showProfile()
       .then(res => {
-        setAccountDetails(res.data.data);
         console.warn(res.data.data);
+        setAccountDetails(res.data.data);
       })
       .catch(err => {
-        console.warn(err);
+        console.warn(err.response);
       });
-
-    // setTimeout(() => {
-    //   setIsOpen(true);
-    // }, 5000);
   }, []);
+
   let accept = () => {
     setIsOpen(false);
     navigation.navigate('Details', {item: demoOrder});
@@ -82,15 +83,11 @@ const Account = ({navigation}: AccountProps) => {
               type={'history'}
               onPress={() => navigation.navigate('History')}
             />
-            <Avatar />
+            <Avatar imageURL={user.avatar} />
             <YellowButton type={'add'} onPress={() => setIsOpen(!isOpen)} />
           </View>
           <View style={styles.infoWrapper}>
-            <Text style={styles.nameText}>
-              {!!accountDetails &&
-                accountDetails.agent &&
-                accountDetails.agent.name}
-            </Text>
+            <Text style={styles.nameText}>{user.name}</Text>
             <Text style={styles.legalName}>
               {!!accountDetails && accountDetails.title}
             </Text>
@@ -105,6 +102,38 @@ const Account = ({navigation}: AccountProps) => {
               style={styles.switch}
               value={isActive}
               trackColor={{true: colors.yellow, false: colors.accent}}
+            />
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              // flex: 1,
+              // borderWidth: 1,
+              paddingTop: 10,
+            }}>
+            <Text
+              style={{
+                paddingLeft: 30,
+                flex: 1,
+              }}>
+              {strings.logout} ------->
+            </Text>
+            {/* <RoundButton
+              fill
+              full
+              big
+              // textColor={colors.yellow}
+              backgroundColor={colors.yellow}
+              text={strings.logout}
+            /> */}
+            <YellowButton
+              type="exit-to-app"
+              onPress={() => {
+                dispatch(userLoggedOut());
+                navigation.navigate('Login');
+              }}
             />
           </View>
           <Text style={styles.ordersText}>{strings.orders}</Text>
@@ -204,4 +233,12 @@ const styles = StyleSheet.create({
   },
 });
 
+// const mapStateToProps = ({user}) => ({user});
+
+const mapStateToProps = ({user}) => {
+  return {user};
+};
+// const mapDispatchToProps = dispatch => ({});
+
+let Account = connect(mapStateToProps, null)(AccountScreen);
 export {Account};

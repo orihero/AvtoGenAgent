@@ -3,13 +3,10 @@ import {View, Text, StyleSheet, Image} from 'react-native';
 import {Icons} from '../../constants/index';
 import {colors} from '../../constants/colors';
 
-const Avatar = () => {
+const Avatar = ({imageURL}) => {
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.image}
-        source={{uri: 'https://avatarfiles.alphacoders.com/881/88122.jpg'}}
-      />
+      <Image style={styles.image} source={{uri: imageURL}} />
       <View style={styles.pen}>
         <Icons name={'pen'} color={colors.accent} size={18} />
       </View>
@@ -28,7 +25,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     transform: [{translateX: 40}, {translateY: -40}],
-    marginBottom:-40
+    marginBottom: -40,
   },
 });
 

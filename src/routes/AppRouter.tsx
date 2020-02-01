@@ -1,7 +1,7 @@
 import React from 'react';
-import {createAppContainer} from 'react-navigation';
+import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
-import {Account, Details, History} from '../views';
+import {Account, Details, History, Loader, Login, FillInfo} from '../views';
 import InnerHeader from '../components/InnerHeader';
 import strings from '../locales/strings';
 
@@ -36,6 +36,15 @@ let AccountStack = createStackNavigator(
   },
 );
 
-const AppRouter = createAppContainer(AccountStack);
+// const AppRouter = createAppContainer(AccountStack);
 
-export default AppRouter;
+const AppRouter = createSwitchNavigator({
+  Loader,
+  Login,
+  FillInfo,
+  AccountStack,
+});
+
+const AppContainer = createAppContainer(AppRouter);
+
+export default AppContainer;

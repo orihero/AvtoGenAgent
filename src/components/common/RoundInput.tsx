@@ -7,12 +7,15 @@ interface RoundInputProps {
   placeholder: string;
 }
 
-const RoundInput = ({placeholder}) => {
+const RoundInput = ({placeholder, setData}) => {
   return (
     <View style={[commonStyles.shadow, styles.wrapper]}>
       <TextInput
         placeholder={placeholder}
         placeholderTextColor={colors.darkGray}
+        onChangeText={text => {
+          setData(text);
+        }}
       />
     </View>
   );
