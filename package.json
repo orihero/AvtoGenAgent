@@ -7,16 +7,18 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "and": "react-native run-android"
   },
   "dependencies": {
     "@types/jest": "^24.0.23",
     "@types/react": "^16.9.15",
     "@types/react-native": "^0.60.23",
     "@types/react-test-renderer": "^16.9.1",
+    "axios": "^0.19.2",
     "react": "16.9.0",
     "react-native": "0.61.5",
-    "react-native-gesture-handler": "^1.5.2",
+    "react-native-gesture-handler": "^1.5.3",
     "react-native-localization": "^2.1.6",
     "react-native-reanimated": "^1.4.0",
     "react-native-safe-area-context": "^0.6.1",

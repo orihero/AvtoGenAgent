@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Switch} from 'react-native';
+import {View, StyleSheet, Switch, YellowBox} from 'react-native';
 import {colors} from '../../constants';
 import strings from '../../locales/strings';
 import Avatar from '../../components/common/Avatar';
@@ -8,6 +8,8 @@ import OrderCard, {OrderProps} from './OrderCard';
 import Modal from '../../components/Modal';
 import Header from '../../components/Header';
 import NewOrder from './NewOrder';
+import request from '../../api/requests';
+import YellowButton from '../../components/common/YellowButton';
 
 interface AccountProps {
   navigation: any;
@@ -33,13 +35,36 @@ export let demoOrder: OrderProps = {
   user: null,
 };
 
+// request.profile
+//   .showProfile()
+//   .then(res => {
+//     setAccountDetails(res.data);
+//     console.warn(accountDetails);
+//   })
+//   .catch(err => {
+//     console.warn(err);
+//   });
+
 const Account = ({navigation}: AccountProps) => {
   const [isActive, setisActive] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
+
+  let [accountDetails, setAccountDetails] = useState({});
+
   useEffect(() => {
-    setTimeout(() => {
-      setIsOpen(true);
-    }, 5000);
+    request.profile
+      .showProfile()
+      .then(res => {
+        setAccountDetails(res.data.data);
+        console.warn(res.data.data);
+      })
+      .catch(err => {
+        console.warn(err);
+      });
+
+    // setTimeout(() => {
+    //   setIsOpen(true);
+    // }, 5000);
   }, []);
   let accept = () => {
     setIsOpen(false);
@@ -52,43 +77,69 @@ const Account = ({navigation}: AccountProps) => {
     <View style={styles.wrapper}>
       <View style={styles.container}>
         <View style={styles.content}>
-          <View style={styles.infoWrapper}>
+          <View style={styles.avatarWrapper}>
+            <YellowButton
+              type={'history'}
+              onPress={() => navigation.navigate('History')}
+            />
             <Avatar />
-            <Text style={styles.nameText}>Scarlett Johansson</Text>
-            <Text style={styles.legalName}>AVTOritet Car-Wash</Text>
-            <Text style={styles.address}>ул. Лабзак, 12/1, Tashkent</Text>
+            <YellowButton type={'add'} onPress={() => setIsOpen(!isOpen)} />
           </View>
+          <View style={styles.infoWrapper}>
+            <Text style={styles.nameText}>
+              {!!accountDetails &&
+                accountDetails.agent &&
+                accountDetails.agent.name}
+            </Text>
+            <Text style={styles.legalName}>
+              {!!accountDetails && accountDetails.title}
+            </Text>
+            <Text style={styles.address}>
+              {!!accountDetails && accountDetails.company_address}
+            </Text>
+          </View>
+          <View style={styles.sideRow}>
+            <Text style={styles.active}>{strings.active}</Text>
+            <Switch
+              onValueChange={val => setisActive(val)}
+              style={styles.switch}
+              value={isActive}
+              trackColor={{true: colors.yellow, false: colors.accent}}
+            />
+          </View>
+          <Text style={styles.ordersText}>{strings.orders}</Text>
         </View>
       </View>
-      <View style={styles.sideRow}>
-        <Text style={styles.active}>{strings.active}</Text>
-        <Switch
-          onValueChange={val => setisActive(val)}
-          style={styles.switch}
-          value={isActive}
-          trackColor={{true: colors.yellow, false: colors.accent}}
-        />
-      </View>
-      <Text style={styles.ordersText}>{strings.orders}</Text>
-      <View style={styles.ordersWrapper}>
-        <OrderCard {...demoOrder} />
-      </View>
+      <OrderCard {...demoOrder} />
+      {/* <View style={styles.ordersWrapper}></View> */}
       {isOpen && (
         <Modal isOpen={isOpen}>
           <NewOrder {...demoOrder} {...{accept, decline}} />
         </Modal>
       )}
-      <Header menuPress={() => navigation.navigate('History')} />
+      {/* <Header menuPress={() => navigation.navigate('History')} /> */}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  wrapper: {flex: 1, backgroundColor: colors.ultraLightGray, paddingTop: 60},
+  wrapper: {
+    flex: 1,
+    backgroundColor: colors.ultraLightGray,
+    // paddingTop: 60,
+  },
   modalContent: {
     padding: 15,
   },
-  ordersWrapper: {flex: 1},
+  avatarWrapper: {
+    // borderWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    // alignItems: 'center',
+  },
+  // ordersWrapper: {
+  //   flex: 1,
+  // },
   ordersText: {
     color: colors.accent,
     fontSize: 16,
@@ -97,10 +148,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   infoWrapper: {
+    height: 90,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
-    marginTop: 30,
+    // marginBottom: 20,
+    marginTop: 10,
   },
   sideRow: {
     flexDirection: 'row',
@@ -123,22 +175,25 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
   },
   nameText: {
     fontSize: 20,
     color: colors.accent,
-    marginBottom: 15,
+    marginBottom: 10,
+    textAlign: 'center',
   },
   legalName: {
     fontWeight: 'bold',
     fontSize: 20,
     color: colors.accent,
+    textAlign: 'center',
   },
   address: {
     fontWeight: '400',
     fontSize: 14,
     color: colors.darkGray,
+    textAlign: 'center',
   },
   active: {
     fontSize: 13,

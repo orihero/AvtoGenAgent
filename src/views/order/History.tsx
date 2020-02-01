@@ -7,7 +7,7 @@ import {colors} from '../../constants';
 import strings from '../../locales/strings';
 import OrderItem from './OrderItem';
 import {demoOrder} from '../account/Account';
-import OrderCard from '../account/OrderCard';
+import OrderPill from '../../components/OrderPill';
 
 let activeButton: RoundButtonProps = {
   backgroundColor: colors.yellow,
@@ -42,7 +42,7 @@ const History = () => {
       </View>
       <FlatList
         keyExtractor={(e, i) => i.toString()}
-        renderItem={({item, ...props}) => <OrderCard {...props} {...item} />}
+        renderItem={({item, ...props}) => <OrderPill {...props} {...item} />}
         data={[demoOrder, demoOrder, demoOrder, demoOrder]}
       />
     </View>

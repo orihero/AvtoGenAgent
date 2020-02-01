@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     borderColor: colors.extraGray,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 10,
+    marginVertical: 10,
   },
   titleText: {
     fontSize: 18,

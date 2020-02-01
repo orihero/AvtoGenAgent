@@ -1,56 +1,252 @@
-import React from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
+// import React, {useState} from 'react';
+// import {View, StyleSheet, ScrollView, Dimensions} from 'react-native';
 
-import {colors} from '../../constants/index';
-import Property, {PropertyProps} from '../../components/common/Property';
-import UserInfo from '../../components/common/UserInfo';
-import {OrderStatus} from '../order';
+// import {colors} from '../../constants/index';
+// import Property, {PropertyProps} from '../../components/common/Property';
+// import UserInfo from '../../components/common/UserInfo';
+// import {OrderStatus} from '../order';
 
-export interface UserProps {
-  name: string;
-  phone: string;
-  image: string;
-}
-export interface OrderProps {
-  user: UserProps;
-  properties: PropertyProps[];
-  status?: OrderStatus;
-}
-const OrderCard = ({user, properties}: OrderProps) => {
+// export interface UserProps {
+//   name: string;
+//   phone: string;
+//   image: string;
+// }
+// export interface OrderProps {
+//   user: UserProps;
+//   properties: PropertyProps[];
+//   status?: OrderStatus;
+// }
+
+// let {width, height} = Dimensions.get('window');
+
+// const OrderCard = ({user, properties}: OrderProps) => {
+//   let [cardOn, setCardOn] = useState(false);
+
+//   return (
+//     <View
+//       style={[
+//         styles.container,
+//         {
+//           top: cardOn ? 0 : height - 120,
+//         },
+//       ]}>
+//       <View style={{alignItems: 'center'}}>
+//         <View style={styles.indicator} />
+//       </View>
+//       <UserInfo {...user} toggleCard={setCardOn} cardVisibility={cardOn} />
+//       <ScrollView
+//         style={styles.properties}
+//         showsVerticalScrollIndicator={false}>
+//         {properties.map((e, key) =>
+//           e.price ? null : <Property {...e} {...{key}} />,
+//         )}
+//       </ScrollView>
+//     </View>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     position: 'absolute',
+//     backgroundColor: colors.white,
+//     borderRadius: 15,
+//     paddingHorizontal: 30,
+//     top: height - 120,
+//     bottom: 0,
+//     // marginTop: 273 - height,
+//     // top: 0,
+//     // paddingVertical: 15,
+//     // marginVertical: 7.5,
+//   },
+//   indicator: {
+//     width: 40,
+//     height: 4,
+//     borderRadius: 5,
+//     backgroundColor: colors.ultrLightBlue,
+//     marginTop: 10,
+//   },
+//   properties: {},
+// });
+
+// export default OrderCard;
+
+//mutal's fucking UI
+import React, {useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableWithoutFeedback,
+  LayoutAnimation,
+  Animated,
+  Dimensions,
+} from 'react-native';
+import {colors} from '../../constants/colors';
+import {Icons} from '../../constants/icons';
+import RoundButton from '../../components/common/RoundButton';
+import strings from '../../locales/strings';
+import {PanGestureHandler, State, FlatList} from 'react-native-gesture-handler';
+import Text from '../../components/common/CustomText';
+import OrderPill from '../../components/OrderPill';
+import {demoOrder} from './Account';
+
+const OrderCard = ({onPress}) => {
+  let {height: deviceHeight, width: deviceWidth} = Dimensions.get('window');
+
+  let isExpanded = false;
+  const [expanded, setExpanded] = useState(false);
+  let height = new Animated.Value(0);
+  let onGestureEvent = Animated.event([
+    {
+      nativeEvent: {
+        translationY: height,
+      },
+    },
+  ]);
+  let onHandlerStateChange = ({nativeEvent}) => {
+    if (nativeEvent.oldState === State.ACTIVE) {
+      if (nativeEvent.translationY > 0) {
+        Animated.spring(height, {toValue: deviceHeight}).start(() => {
+          isExpanded = false;
+          height.setOffset(0);
+          height.setValue(0);
+        });
+      } else {
+        Animated.spring(height, {toValue: 80 - deviceHeight}).start(() => {
+          isExpanded = true;
+          height.setOffset(80 - deviceHeight);
+          height.setValue(0);
+        });
+      }
+    }
+  };
+  let contentHeight = Animated.subtract(0, height).interpolate({
+    inputRange: [0, deviceHeight - 80],
+    outputRange: [0, deviceHeight - 80],
+    extrapolate: 'clamp',
+  });
+  let translateY = contentHeight.interpolate({
+    inputRange: [0, 80],
+    outputRange: [500, -20],
+    extrapolate: 'clamp',
+  });
   return (
-    <View style={styles.container}>
-      <View style={{alignItems: 'center'}}>
-        <View style={styles.indicator} />
-      </View>
-      <UserInfo {...user} />
-      <ScrollView
-        style={styles.properties}
-        showsVerticalScrollIndicator={false}>
-        {properties.map((e, key) =>
-          e.price ? null : <Property {...e} {...{key}} />,
-        )}
-      </ScrollView>
+    <View>
+      <Animated.View>
+        <View style={styles.container}>
+          <PanGestureHandler
+            onGestureEvent={onGestureEvent}
+            onHandlerStateChange={onHandlerStateChange}>
+            <View>
+              <View
+                style={{
+                  backgroundColor: colors.white,
+                  padding: 5,
+                  borderRadius: 10,
+                  alignItems: 'center',
+                  // elevation: 1,
+                }}>
+                <View style={styles.indicator}></View>
+              </View>
+            </View>
+          </PanGestureHandler>
+          <Animated.ScrollView
+            showsVerticalScrollIndicator={false}
+            style={{
+              height: contentHeight,
+              // maxHeight: 400,
+            }}>
+            <FlatList
+              data={[demoOrder, demoOrder, demoOrder, demoOrder]}
+              renderItem={({item, ...props}) => (
+                <OrderPill {...item} {...props} collapsed={true} />
+              )}
+              keyExtractor={(e, i) => i.toString()}
+            />
+          </Animated.ScrollView>
+        </View>
+      </Animated.View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  row: {flexDirection: 'row'},
   container: {
-    flex: 1,
     backgroundColor: colors.white,
-    borderRadius: 15,
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    left: 0,
+    padding: 15,
     paddingHorizontal: 30,
-    paddingVertical: 15,
-    marginVertical: 7.5,
+    borderRadius: 30,
+    minHeight: 250,
   },
   indicator: {
     width: 40,
     height: 4,
     borderRadius: 5,
-    backgroundColor: colors.ultrLightBlue,
-    marginTop: 10,
+    backgroundColor: colors.extraGray,
+    margin: 10,
+    marginTop: 5,
   },
-  properties: {},
+  top: {
+    flexDirection: 'row',
+    paddingBottom: 10,
+  },
+  iconWrapper: {},
+  titleWrapper: {
+    flex: 1,
+    paddingHorizontal: 10,
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 17,
+    fontWeight: 'bold',
+  },
+  location: {
+    fontSize: 12,
+    color: colors.lightGray,
+  },
+  distanceWrapper: {},
+  distance: {
+    fontSize: 17,
+    fontWeight: 'bold',
+  },
+  content: {
+    paddingVertical: 15,
+    marginBottom: 50,
+  },
+  borderTop: {
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderColor: colors.ultraLightGray,
+  },
+  timeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  mainText: {
+    fontSize: 16,
+  },
+  twoBorder: {
+    paddingVertical: 7,
+    width: 250,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  timeText: {},
+  bold: {
+    fontWeight: 'bold',
+  },
+  bottom: {
+    flexDirection: 'row',
+    paddingBottom: 10,
+    paddingHorizontal: 5,
+  },
 });
 
 export default OrderCard;
