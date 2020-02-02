@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {commonStyles, colors} from '../../constants';
 import RoundInput from '../../components/common/RoundInput';
@@ -9,6 +9,10 @@ import {connect} from 'react-redux';
 import {userLoaded, userLoggedIn} from '../../redux/actions';
 
 const FillInfo = ({navigation, dispatch}) => {
+  useEffect(() => {
+  
+  }, []);
+
   let proceed = () => {
     let stringName = name.firstName + ' ' + name.lastName;
     let credentials = {
@@ -17,7 +21,6 @@ const FillInfo = ({navigation, dispatch}) => {
     request.user
       .updateUser(credentials)
       .then(res => {
-        console.warn(res);
         dispatch(userLoggedIn(res.data.data));
       })
       .catch(err => {
@@ -51,7 +54,9 @@ const FillInfo = ({navigation, dispatch}) => {
       <View style={styles.row}>
         <RoundButton
           full
-          onPress={proceed}
+          onPress={() => {
+            navigation.navigate('Account');
+          }}
           fill
           flex
           backgroundColor={colors.ultraLightGray}

@@ -1,17 +1,22 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableWithoutFeedback} from 'react-native';
 import {colors} from '../../constants/colors';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import {Icons} from '../../constants/icons';
 import {
   TouchableHighlight,
   TouchableNativeFeedback,
 } from 'react-native-gesture-handler';
 
-const YellowButton = ({type, action, onPress}) => {
+const YellowButton = ({primaryType, type, action, onPress}) => {
   return (
     <TouchableWithoutFeedback onPress={onPress}>
-      <View style={styles.container}>
-        <MaterialIcons name={type} size={25} />
+      <View style={[styles.container]}>
+        {primaryType ? (
+          <Icons name={primaryType} size={14} />
+        ) : (
+          <SimpleLineIcons name={type} size={18} />
+        )}
       </View>
     </TouchableWithoutFeedback>
   );

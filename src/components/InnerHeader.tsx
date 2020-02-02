@@ -27,18 +27,26 @@ const InnerHeader = ({
       {Platform.OS === 'ios' && <StatusBar barStyle="light-content" />}
       <View style={styles.header}>
         <View style={[styles.side, {marginLeft: -15}]}>
-          <HeaderBackButton
-            tintColor={colors.darkGray}
-            onPress={() => {
-              if (back) {
-                navigation.navigate(back);
-              } else {
-                navigation.goBack();
-              }
-            }}
-          />
+          {!!back && (
+            <HeaderBackButton
+              tintColor={colors.darkGray}
+              onPress={() => {
+                if (back) {
+                  navigation.navigate(back);
+                } else {
+                  navigation.goBack();
+                }
+              }}
+            />
+          )}
         </View>
-        <View style={styles.headerMiddle}>
+        <View
+          style={[
+            styles.headerMiddle,
+            !back && {
+              paddingVertical: 20,
+            },
+          ]}>
           <Text style={styles.headerText}>{title}</Text>
         </View>
         <View style={styles.side} />

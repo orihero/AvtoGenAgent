@@ -36,7 +36,6 @@ export let demoOrder: OrderProps = {
     },
     {title: 'Цена умлуги', price: '40 000 сум'},
   ],
-  user: null,
 };
 
 // request.profile
@@ -56,15 +55,15 @@ const AccountScreen = ({navigation, dispatch, user}: AccountProps) => {
   let [accountDetails, setAccountDetails] = useState({});
 
   useEffect(() => {
-    request.profile
-      .showProfile()
-      .then(res => {
-        console.warn(res.data.data);
-        setAccountDetails(res.data.data);
-      })
-      .catch(err => {
-        console.warn(err.response);
-      });
+    // request.profile
+    //   .showProfile()
+    //   .then(res => {
+    //     setAccountDetails(res.data.data);
+    //   })
+    //   .catch(err => {
+    //     console.warn('error in showprofile');
+    //     console.warn(err.response);
+    //   });
   }, []);
 
   let accept = () => {
@@ -80,11 +79,16 @@ const AccountScreen = ({navigation, dispatch, user}: AccountProps) => {
         <View style={styles.content}>
           <View style={styles.avatarWrapper}>
             <YellowButton
-              type={'history'}
-              onPress={() => navigation.navigate('History')}
+              primaryType={'menu'}
+              onPress={() => {
+                navigation.toggleDrawer();
+              }}
+              // type={'history'}
+              // onPress={() => navigation.navigate('History')}
             />
             <Avatar imageURL={user.avatar} />
-            <YellowButton type={'add'} onPress={() => setIsOpen(!isOpen)} />
+            <View style={{width: 60}} />
+            {/* <YellowButton type={'add'} onPress={() => setIsOpen(!isOpen)} /> */}
           </View>
           <View style={styles.infoWrapper}>
             <Text style={styles.nameText}>{user.name}</Text>
@@ -104,38 +108,7 @@ const AccountScreen = ({navigation, dispatch, user}: AccountProps) => {
               trackColor={{true: colors.yellow, false: colors.accent}}
             />
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              // flex: 1,
-              // borderWidth: 1,
-              paddingTop: 10,
-            }}>
-            <Text
-              style={{
-                paddingLeft: 30,
-                flex: 1,
-              }}>
-              {strings.logout} ------->
-            </Text>
-            {/* <RoundButton
-              fill
-              full
-              big
-              // textColor={colors.yellow}
-              backgroundColor={colors.yellow}
-              text={strings.logout}
-            /> */}
-            <YellowButton
-              type="exit-to-app"
-              onPress={() => {
-                dispatch(userLoggedOut());
-                navigation.navigate('Login');
-              }}
-            />
-          </View>
+          {/*  */}
           <Text style={styles.ordersText}>{strings.orders}</Text>
         </View>
       </View>
@@ -195,7 +168,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 15,
     flex: 1,
-    paddingHorizontal: 30,
+    paddingHorizontal: 10,
     backgroundColor: colors.ultraLightGray,
   },
   contact: {

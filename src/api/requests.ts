@@ -7,7 +7,6 @@ export const URL = 'http://api.avtogen.qwertygroup.uz/';
 
 export let configureAxios = storeInstance => {
   axios.interceptors.request.use(req => {
-    console.warn(storeInstance.getState());
     req.headers = {
       Authorization: `Bearer ${storeInstance.getState().user.token}`,
     };
@@ -36,6 +35,7 @@ let request = {
   user: {
     updateUser: credentials =>
       axios.post(`${URL}/profile/update`, formData(credentials)),
+    show: () => axios.get(`${URL}/profile/show`),
   },
 };
 

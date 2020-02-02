@@ -1,9 +1,14 @@
 import React from 'react';
+import {Dimensions} from 'react-native';
 import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import {Account, Details, History, Loader, Login, FillInfo} from '../views';
 import InnerHeader from '../components/InnerHeader';
+import DrawerContent from '../components/DraweContent';
 import strings from '../locales/strings';
+import {createDrawerNavigator} from 'react-navigation-drawer';
+
+const {width: deviceWidth} = Dimensions.get('window');
 
 let AccountStack = createStackNavigator(
   {
@@ -36,13 +41,32 @@ let AccountStack = createStackNavigator(
   },
 );
 
+let FillInfoStack = createStackNavigator({
+  FillInfo: {
+    screen: FillInfo,
+    navigationOptions: {
+      header: props => <InnerHeader {...props} title={strings.editPage} />,
+    },
+  },
+});
+
+const DrawerNavigator = createDrawerNavigator(
+  {
+    AccountStack,
+  },
+  {
+    drawerType: 'slide',
+    drawerWidth: deviceWidth * 0.75,
+    contentComponent: DrawerContent,
+  },
+);
 // const AppRouter = createAppContainer(AccountStack);
 
 const AppRouter = createSwitchNavigator({
   Loader,
   Login,
-  FillInfo,
-  AccountStack,
+  FillInfoStack,
+  DrawerNavigator,
 });
 
 const AppContainer = createAppContainer(AppRouter);

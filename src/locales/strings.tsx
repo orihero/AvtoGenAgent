@@ -70,5 +70,6 @@ export default new LocalizedStrings({
     inWeek: 'За неделю',
     inToday: 'За сегодня',
     logout: 'Выйти',
+    editPage: 'Редактировать',
   },
 });

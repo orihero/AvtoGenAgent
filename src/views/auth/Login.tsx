@@ -72,6 +72,15 @@ const Login = ({navigation, userLoggedIn}) => {
     requests.auth
       .verifyCode(data.user_id, {code})
       .then(res => {
+        requests.user
+          .show()
+          .then(res => {
+            console.warn(res);
+            userLoggedIn(res.data.data);
+          })
+          .catch(err => {
+            console.warn(err.response);
+          });
         if (res.data.data.name) {
           userLoggedIn(res.data.data);
           navigation.navigate('Account');
