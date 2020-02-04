@@ -5,6 +5,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-view';
 import {Provider} from 'react-redux';
 import configureStore from './src/redux/configureStore';
 import {configureAxios} from './src/api/requests';
+import NotificationService from './src/utils/NotificationService';
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -17,6 +18,8 @@ const App = () => {
 
   let store = configureStore();
   configureAxios(store);
+  NotificationService.setState(store);
+  NotificationService.init();
   return (
     <SafeAreaProvider>
       <Provider store={store}>

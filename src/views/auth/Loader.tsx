@@ -10,6 +10,7 @@ import {userLoaded} from '../../redux/actions';
 const Loader = ({navigation, userLoaded}) => {
   let bootstrap = async () => {
     let data = await AsyncStorage.getItem('@user');
+    // console.warn(data);
     if (!data) {
       navigation.navigate('Login');
       return;

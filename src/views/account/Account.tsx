@@ -63,6 +63,10 @@ const AccountScreen = ({navigation, dispatch, user}: AccountProps) => {
     //   .catch(err => {
     //     console.warn('error in showprofile');
     //     console.warn(err.response);
+    //     setAccountDetails({
+    //       // title: strings.noCompany,
+    //       company_address: strings.noCompany,
+    //     });
     //   });
   }, []);
 

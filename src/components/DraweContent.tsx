@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, YellowBox} from 'react-native';
+import {View, Text, StyleSheet, YellowBox, Alert} from 'react-native';
 import Avatar from './common/Avatar';
 import {connect} from 'react-redux';
 import {colors} from '../constants/colors';
@@ -7,6 +7,7 @@ import {FlatList} from 'react-native-gesture-handler';
 import YellowButton from './common/YellowButton';
 import {userLoggedOut} from '../redux/actions/action';
 import DrawerItem from '../components/DrawerItem';
+import strings from '../locales/strings';
 
 const DraweContent = ({navigation, dispatch, user}) => {
   const menuList = [
@@ -23,6 +24,23 @@ const DraweContent = ({navigation, dispatch, user}) => {
       to: '',
     },
   ];
+
+  const logoutAlert = () => {
+    Alert.alert(strings.wait, strings.wannaLogout, [
+      {
+        text: strings.no,
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {
+        text: strings.ok,
+        onPress: () => {
+          dispatch(userLoggedOut());
+          navigation.navigate('Login');
+        },
+      },
+    ]);
+  };
 
   return (
     <View style={styles.container}>
@@ -48,8 +66,7 @@ const DraweContent = ({navigation, dispatch, user}) => {
           <YellowButton
             type={'power'}
             onPress={() => {
-              dispatch(userLoggedOut());
-              navigation.navigate('Login');
+              logoutAlert();
             }}
           />
         </View>

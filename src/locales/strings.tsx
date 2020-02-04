@@ -71,5 +71,10 @@ export default new LocalizedStrings({
     inToday: 'За сегодня',
     logout: 'Выйти',
     editPage: 'Редактировать',
+    noCompany: 'no company',
+    no: 'нет',
+    ok: 'ок',
+    wait: 'Подождите',
+    wannaLogout: 'Вы действительно хотите выйти?',
   },
 });
