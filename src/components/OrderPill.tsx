@@ -17,11 +17,29 @@ export interface OrderProps {
   status?: OrderStatus;
 }
 
+const properties = [
+  {
+    title: 'Дата посещения',
+    rightText: '16:35',
+    description: '03.12.2019',
+  },
+  {
+    title: 'Тип автомобиля',
+    icon: 'light',
+    description: 'Легковой',
+  },
+  {
+    title: 'Тип услуги',
+    description: 'Бесконтактная мойка кузова автомобиля, коврики пороги',
+  },
+  {title: 'Цена умлуги', price: '40 000 сум'},
+];
+
 let {width, height} = Dimensions.get('window');
 
-const OrderPill = ({user, properties, collapsed}: OrderProps) => {
+const OrderPill = ({item, collapsed}: OrderProps) => {
   let [cardOn, setCardOn] = useState(false);
-
+  console.warn(item);
   useEffect(() => {
     setCardOn(collapsed);
   }, [collapsed]);
@@ -34,17 +52,42 @@ const OrderPill = ({user, properties, collapsed}: OrderProps) => {
           height: cardOn ? 100 : null,
         },
       ]}>
-      {/* <View style={{alignItems: 'center'}}>
-        <View style={styles.indicator} />
-      </View> */}
-      <UserInfo {...user} toggleCard={setCardOn} cardVisibility={cardOn} />
+      <UserInfo
+        user={item.user}
+        toggleCard={setCardOn}
+        cardVisibility={cardOn}
+      />
       <ScrollView
         style={styles.properties}
         showsVerticalScrollIndicator={false}>
-        {properties &&
-          properties.map((e, key) =>
-            e.price ? null : <Property {...e} {...{key}} />,
-          )}
+        <Property
+          title={properties[0].title}
+          description={item.created_at.slice(0, 10)}
+          rightText={item.created_at.slice(11)}
+        />
+        <Property
+          title={properties[1].title}
+          icon={
+            !!item && item.car_type && item.car_type.icon
+              ? item.car_type.icon
+              : properties[1].icon
+          }
+          description={
+            item.car_type
+              ? item.car_type.description
+              : properties[1].description
+          }
+        />
+        <Property
+          title={properties[2].title}
+          description={properties[2].description}
+        />
+        <Property
+          title={properties[3].title}
+          price={
+            !!item && item.total_price ? item.total_price : properties[3].price
+          }
+        />
       </ScrollView>
     </View>
   );

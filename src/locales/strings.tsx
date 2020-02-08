@@ -76,5 +76,6 @@ export default new LocalizedStrings({
     ok: 'ок',
     wait: 'Подождите',
     wannaLogout: 'Вы действительно хотите выйти?',
+    visitDate: 'Дата посещения',
   },
 });

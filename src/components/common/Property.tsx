@@ -31,7 +31,7 @@ const Property = ({
       </View>
       <View style={styles.right}>
         {icon && <Icons color={colors.accent} size={18} name={icon} />}
-        {rightText && <Text style={styles.rightText}>{rightText}</Text>}
+        {rightText ? <Text style={styles.rightText}>{rightText}</Text> : <></>}
       </View>
     </View>
   );

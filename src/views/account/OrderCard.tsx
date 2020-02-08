@@ -91,7 +91,7 @@ import Text from '../../components/common/CustomText';
 import OrderPill from '../../components/OrderPill';
 import {demoOrder} from './Account';
 
-const OrderCard = ({onPress}) => {
+const OrderCard = ({onPress, ordersList}) => {
   let {height: deviceHeight, width: deviceWidth} = Dimensions.get('window');
 
   let isExpanded = false;
@@ -157,13 +157,16 @@ const OrderCard = ({onPress}) => {
               height: contentHeight,
               // maxHeight: 400,
             }}>
+            {/* {!!ordersList && */}
+            {/* ordersList.map((order, index) => { */}
             <FlatList
-              data={[demoOrder, demoOrder, demoOrder, demoOrder]}
+              data={ordersList}
               renderItem={({item, ...props}) => (
-                <OrderPill {...item} {...props} collapsed={true} />
+                <OrderPill item={item} {...props} collapsed={true} />
               )}
-              keyExtractor={(e, i) => i.toString()}
+              keyExtractor={e => e.id.toString()}
             />
+            {/* })} */}
           </Animated.ScrollView>
         </View>
       </Animated.View>

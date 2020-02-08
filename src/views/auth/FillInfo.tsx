@@ -9,9 +9,7 @@ import {connect} from 'react-redux';
 import {userLoaded, userLoggedIn} from '../../redux/actions';
 
 const FillInfo = ({navigation, dispatch}) => {
-  useEffect(() => {
-  
-  }, []);
+  useEffect(() => {}, []);
 
   let proceed = () => {
     let stringName = name.firstName + ' ' + name.lastName;
@@ -21,6 +19,7 @@ const FillInfo = ({navigation, dispatch}) => {
     request.user
       .updateUser(credentials)
       .then(res => {
+        console.warn(res.data.data);
         dispatch(userLoggedIn(res.data.data));
       })
       .catch(err => {

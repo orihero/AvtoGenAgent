@@ -26,6 +26,7 @@ const Loader = ({navigation, userLoaded}) => {
       return;
     }
     userLoaded(userData);
+    console.warn(userData.token);
     if (!!userData.name) {
       navigation.navigate('Account');
     } else {

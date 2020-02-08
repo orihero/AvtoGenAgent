@@ -3,7 +3,7 @@ import axios from 'axios';
 const tempToken =
   '$2y$10$1DiytpaACWq4AqZ.Wlo6DOKkNy3X9TwwJ5mIyPk0kchPI6ARFGW2e';
 
-export const URL = 'http://api.avtogen.qwertygroup.uz/';
+export const URL = 'https://api.autogen.uz';
 
 export let configureAxios = storeInstance => {
   axios.interceptors.request.use(req => {
@@ -24,7 +24,8 @@ let formData = rawData => {
 
 let request = {
   profile: {
-    showProfile: () => axios.get(`${URL}/profile/showCompany`),
+    showProfile: () => axios.get(`${URL}/profile/show`),
+    showCompany: () => axios.get(`${URL}/profile/showCompany`),
   },
   auth: {
     login: credentials =>
@@ -36,6 +37,10 @@ let request = {
     updateUser: credentials =>
       axios.post(`${URL}/profile/update`, formData(credentials)),
     show: () => axios.get(`${URL}/profile/show`),
+  },
+  booking: {
+    getAllOrders: status =>
+      axios.get(`${URL}/booking/agent-books?status`, status),
   },
 };
 

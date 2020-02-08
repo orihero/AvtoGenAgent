@@ -52,22 +52,36 @@ const AccountScreen = ({navigation, dispatch, user}: AccountProps) => {
   const [isActive, setisActive] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
 
-  let [accountDetails, setAccountDetails] = useState({});
+  let [profileDetails, setProfileDetails] = useState({});
+  let [ordersList, setOrdersList] = useState([]);
 
   useEffect(() => {
-    // request.profile
-    //   .showProfile()
-    //   .then(res => {
-    //     setAccountDetails(res.data.data);
-    //   })
-    //   .catch(err => {
-    //     console.warn('error in showprofile');
-    //     console.warn(err.response);
-    //     setAccountDetails({
-    //       // title: strings.noCompany,
-    //       company_address: strings.noCompany,
-    //     });
-    //   });
+    // showCompany
+    request.profile
+      .showCompany()
+      .then(res => {
+        setProfileDetails(res.data.data);
+        console.warn(res.data.data);
+      })
+      .catch(err => {
+        console.warn('error in showprofile');
+        console.warn(err.response);
+        setProfileDetails({
+          // title: strings.noCompany,
+          company_address: strings.noCompany,
+        });
+      });
+
+    // showOrders
+    request.booking
+      .getAllOrders('new')
+      .then(res => {
+        console.warn(res.data.data);
+        setOrdersList(res.data.data);
+      })
+      .catch(err => {
+        console.warn(err.response);
+      });
   }, []);
 
   let accept = () => {
@@ -97,10 +111,10 @@ const AccountScreen = ({navigation, dispatch, user}: AccountProps) => {
           <View style={styles.infoWrapper}>
             <Text style={styles.nameText}>{user.name}</Text>
             <Text style={styles.legalName}>
-              {!!accountDetails && accountDetails.title}
+              {!!profileDetails && profileDetails.title}
             </Text>
             <Text style={styles.address}>
-              {!!accountDetails && accountDetails.company_address}
+              {!!profileDetails && profileDetails.company_address}
             </Text>
           </View>
           <View style={styles.sideRow}>
@@ -116,7 +130,7 @@ const AccountScreen = ({navigation, dispatch, user}: AccountProps) => {
           <Text style={styles.ordersText}>{strings.orders}</Text>
         </View>
       </View>
-      <OrderCard {...demoOrder} />
+      <OrderCard ordersList={ordersList} />
       {/* <View style={styles.ordersWrapper}></View> */}
       {isOpen && (
         <Modal isOpen={isOpen}>

@@ -11,13 +11,8 @@ import {colors} from '../../constants';
 import {UserProps} from '../../views/account/OrderCard';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 
-const UserInfo = ({
-  image = 'https://i7.pngguru.com/preview/393/995/701/aspria-fitness-computer-icons-user-clip-art-my-account-icon-thumbnail.jpg',
-  name = 'Николай Соболев',
-  phone = '8 99 000 11 25',
-  toggleCard,
-  cardVisibility,
-}: UserProps) => {
+const UserInfo = ({user, toggleCard, cardVisibility}: UserProps) => {
+  console.warn(user);
   return (
     <TouchableWithoutFeedback
       onPress={() => {
@@ -27,13 +22,13 @@ const UserInfo = ({
       <View style={styles.userInfo}>
         <Image
           source={{
-            uri: image,
+            uri: user.profile.avatar,
           }}
           style={styles.image}
         />
         <View style={styles.contact}>
-          <Text style={styles.name}>{name}</Text>
-          <Text style={styles.phone}>{phone}</Text>
+          <Text style={styles.name}>{user.profile.name}</Text>
+          <Text style={styles.phone}>{user.profile.phone}</Text>
         </View>
         <View style={styles.controller}>
           <SimpleLineIcons
