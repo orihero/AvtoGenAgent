@@ -71,7 +71,7 @@ const OrderPill = ({item, collapsed}: OrderProps) => {
             !!item && item.car_type && item.car_type.icon
               ? item.car_type.icon
               : properties[1].icon
-          }
+          }gi
           description={
             item.car_type
               ? item.car_type.description
