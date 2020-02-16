@@ -1,13 +1,14 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import React, {useEffect} from 'react';
-import {Image, StyleSheet, View} from 'react-native';
-import {connect} from 'react-redux';
+import React, { useEffect } from 'react';
+import { Image, StyleSheet, View } from 'react-native';
+import { connect } from 'react-redux';
 import logo from '../../assets/images/logo-light.png';
-import {colors} from '../../constants';
+import { colors } from '../../constants';
 import strings from '../../locales/strings';
-import {userLoaded} from '../../redux/actions';
+import { userLoaded } from '../../redux/actions';
+import NotificationService from '../../utils/NotificationService';
 
-const Loader = ({navigation, userLoaded}) => {
+const Loader = ({ navigation, userLoaded }) => {
   let bootstrap = async () => {
     let data = await AsyncStorage.getItem('@user');
     // console.warn(data);
@@ -20,7 +21,7 @@ const Loader = ({navigation, userLoaded}) => {
       navigation.navigate('Login');
       return;
     }
-    let {settings} = userData;
+    let { settings } = userData;
     if (!settings) {
       navigation.navigate('Login');
       return;
@@ -28,6 +29,7 @@ const Loader = ({navigation, userLoaded}) => {
     userLoaded(userData);
     console.warn(userData.token);
     if (!!userData.name) {
+      NotificationService.init();
       navigation.navigate('Account');
     } else {
       navigation.navigate('FillInfo');
@@ -60,7 +62,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = ({}) => ({});
+const mapStateToProps = ({ }) => ({});
 
 const mapDispatchToProps = {
   userLoaded,

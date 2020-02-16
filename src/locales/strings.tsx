@@ -71,7 +71,7 @@ export default new LocalizedStrings({
     inToday: 'За сегодня',
     logout: 'Выйти',
     editPage: 'Редактировать',
-    noCompany: 'no company',
+    noCompany: 'нет компании',
     no: 'нет',
     ok: 'ок',
     wait: 'Подождите',

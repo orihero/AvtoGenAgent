@@ -1,10 +1,10 @@
 import React from 'react';
-import {StyleSheet, StatusBar, Platform, UIManager} from 'react-native';
+import { StyleSheet, StatusBar, Platform, UIManager } from 'react-native';
 import AppRouter from './src/routes/AppRouter';
-import {SafeAreaProvider} from 'react-native-safe-area-view';
-import {Provider} from 'react-redux';
+import { SafeAreaProvider } from 'react-native-safe-area-view';
+import { Provider } from 'react-redux';
 import configureStore from './src/redux/configureStore';
-import {configureAxios} from './src/api/requests';
+import { configureAxios } from './src/api/requests';
 import NotificationService from './src/utils/NotificationService';
 
 if (Platform.OS === 'android') {
@@ -19,7 +19,6 @@ const App = () => {
   let store = configureStore();
   configureAxios(store);
   NotificationService.setState(store);
-  NotificationService.init();
   return (
     <SafeAreaProvider>
       <Provider store={store}>

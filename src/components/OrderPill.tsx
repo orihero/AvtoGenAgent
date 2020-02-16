@@ -1,10 +1,10 @@
-import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, ScrollView, Dimensions} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, Dimensions } from 'react-native';
 
-import {colors} from '../constants/index';
-import Property, {PropertyProps} from '../components/common/Property';
+import { colors } from '../constants/index';
+import Property, { PropertyProps } from '../components/common/Property';
 import UserInfo from '../components/common/UserInfo';
-import {OrderStatus} from '../views/order';
+import { OrderStatus } from '../views/order';
 
 export interface UserProps {
   name: string;
@@ -15,6 +15,7 @@ export interface OrderProps {
   user: UserProps;
   properties: PropertyProps[];
   status?: OrderStatus;
+  // item?: OrderItem;
 }
 
 const properties = [
@@ -32,12 +33,12 @@ const properties = [
     title: 'Тип услуги',
     description: 'Бесконтактная мойка кузова автомобиля, коврики пороги',
   },
-  {title: 'Цена умлуги', price: '40 000 сум'},
+  { title: 'Цена умлуги', price: '40 000 сум' },
 ];
 
-let {width, height} = Dimensions.get('window');
+let { width, height } = Dimensions.get('window');
 
-const OrderPill = ({item, collapsed}: OrderProps) => {
+const OrderPill = ({ item, collapsed }: OrderProps) => {
   let [cardOn, setCardOn] = useState(false);
   console.warn(item);
   useEffect(() => {
@@ -71,7 +72,7 @@ const OrderPill = ({item, collapsed}: OrderProps) => {
             !!item && item.car_type && item.car_type.icon
               ? item.car_type.icon
               : properties[1].icon
-          }gi
+          }
           description={
             item.car_type
               ? item.car_type.description
