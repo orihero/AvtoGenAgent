@@ -7,12 +7,12 @@ import {
   TouchableWithoutFeedback,
   LayoutAnimation,
 } from 'react-native';
-import {colors} from '../../constants';
-import {UserProps} from '../../views/account/OrderCard';
+import { colors } from '../../constants';
+import { UserProps } from '../../views/account/OrderCard';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 
-const UserInfo = ({user, toggleCard, cardVisibility}: UserProps) => {
-  console.warn(user);
+const UserInfo = ({ user, toggleCard, cardVisibility }: UserProps) => {
+  // console.warn(user);
   return (
     <TouchableWithoutFeedback
       onPress={() => {
@@ -30,15 +30,15 @@ const UserInfo = ({user, toggleCard, cardVisibility}: UserProps) => {
           <Text style={styles.name}>{user.profile.name}</Text>
           <Text style={styles.phone}>{user.profile.phone}</Text>
         </View>
-        <View style={styles.controller}>
+        {toggleCard && <View style={styles.controller}>
           <SimpleLineIcons
             name="arrow-down"
             size={15}
             style={{
-              transform: [{rotate: cardVisibility ? '0deg' : '180deg'}],
+              transform: [{ rotate: cardVisibility ? '0deg' : '180deg' }],
             }}
           />
-        </View>
+        </View>}
       </View>
     </TouchableWithoutFeedback>
   );

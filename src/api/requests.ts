@@ -3,7 +3,7 @@ import axios from 'axios';
 const tempToken =
   '$2y$10$1DiytpaACWq4AqZ.Wlo6DOKkNy3X9TwwJ5mIyPk0kchPI6ARFGW2e';
 
-export const URL = 'https://api.autogen.uz';
+export const URL = 'https://api.avtogen.uz';
 
 export let configureAxios = storeInstance => {
   axios.interceptors.request.use(req => {
@@ -26,6 +26,7 @@ let request = {
   profile: {
     showProfile: () => axios.get(`${URL}/profile/show`),
     showCompany: () => axios.get(`${URL}/profile/showCompany`),
+    setFcmToken: (data) => axios.post(`${URL}/profile/setFcmToken`, formData(data))
   },
   auth: {
     login: credentials =>
@@ -40,7 +41,9 @@ let request = {
   },
   booking: {
     getAllOrders: status =>
-      axios.get(`${URL}/booking/agent-books?status`, status),
+      axios.get(`${URL}/booking/agent-books?status=${status}`),
+    accept: (id) => axios.get(`${URL}/booking/accept-book/${id}`),
+    reject: (id) => axios.get(`${URL}/booking/reject-book/${id}`),
   },
 };
 

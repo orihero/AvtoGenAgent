@@ -4,9 +4,9 @@ import { Image, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import logo from '../../assets/images/logo-light.png';
 import { colors } from '../../constants';
-import strings from '../../locales/strings';
 import { userLoaded } from '../../redux/actions';
 import NotificationService from '../../utils/NotificationService';
+import request from '../../api/requests';
 
 const Loader = ({ navigation, userLoaded }) => {
   let bootstrap = async () => {
@@ -27,9 +27,16 @@ const Loader = ({ navigation, userLoaded }) => {
       return;
     }
     userLoaded(userData);
-    console.warn(userData.token);
-    if (!!userData.name) {
-      NotificationService.init();
+    // console.warn(userData.token);
+    if (userData.name) {
+      try {
+        NotificationService.init();
+        let fcm_token = await NotificationService.getFcmToken();
+        let res = await request.profile.setFcmToken({ fcm_token });
+      } catch (error) {
+        navigation.navigate('Login');
+        return
+      }
       navigation.navigate('Account');
     } else {
       navigation.navigate('FillInfo');

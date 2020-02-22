@@ -1,12 +1,16 @@
-import React, {useState, Fragment} from 'react';
-import {View, StyleSheet, TextInput} from 'react-native';
+import React, { useState, Fragment } from 'react';
+import { View, StyleSheet, TextInput, ScrollView, ActivityIndicator } from 'react-native';
 import UserInfo from '../../components/common/UserInfo';
-import {colors} from '../../constants';
-import {OrderProps} from '../account/OrderCard';
+import { colors, commonStyles } from '../../constants';
+import { OrderProps } from '../account/OrderCard';
 import Property from '../../components/common/Property';
 import RoundButton from '../../components/common/RoundButton';
 import strings from '../../locales/strings';
 import Text from '../../components/common/CustomText';
+import { properties } from '../../components/OrderPill'
+import request from '../../api/requests';
+import { ordersLoaded } from '../../redux/actions/orders';
+import { connect } from 'react-redux';
 
 export enum OrderStatus {
   INITIAL = 0,
@@ -16,12 +20,9 @@ export enum OrderStatus {
   REVIEWED = 4,
 }
 
-const Details = ({navigation}) => {
-  let {
-    properties,
-    user,
-    status: parentStatus,
-  }: OrderProps = navigation.getParam('item');
+const Details = ({ navigation, parentStatus, ordersLoaded }) => {
+  let item = navigation.getParam('item');
+  const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState(
     parentStatus ? parentStatus : OrderStatus.INITIAL,
   );
@@ -29,8 +30,44 @@ const Details = ({navigation}) => {
     setStatus(status + 1);
   };
   let decline = () => {
-    navigation.navigate('Account');
+    setLoading(true)
+    request.booking.reject(item.id)
+      .then(res => {
+        //* Fetch the remaining new orders
+        request.booking.getAllOrders('new').then(r => {
+          ordersLoaded({ name: 'new', data: r.data.data })
+          navigation.navigate('Account')
+        });
+      }).catch(res => {
+        console.warn(res.response);
+      }).finally(() => {
+        setLoading(false)
+      })
   };
+  let accept = () => {
+    setLoading(true)
+    request.booking.accept(item.id)
+      .then(res => {
+        //* Fetch the remaining new orders
+        request.booking.getAllOrders('new').then(r => {
+          ordersLoaded({ name: 'new', data: r.data.data })
+          navigation.navigate('Account');
+          request.booking
+            .getAllOrders('accepted')
+            .then(res => {
+              ordersLoaded({ name: 'current', data: res.data.data })
+            })
+            .catch(err => {
+              console.warn('error in booking')
+              console.warn(err.response);
+            });
+        });
+      }).catch(res => {
+        console.warn(res.response);
+      }).finally(() => {
+        setLoading(false)
+      })
+  }
   let renderButtons = () => {
     switch (status) {
       case OrderStatus.INITIAL:
@@ -50,7 +87,7 @@ const Details = ({navigation}) => {
               fill
               full
               flex
-              onPress={proceed}
+              onPress={accept}
               backgroundColor={colors.yellow}
             />
           </Fragment>
@@ -92,30 +129,57 @@ const Details = ({navigation}) => {
         return null;
     }
   };
+  if (loading) {
+    return <View style={commonStyles.centeredContainer}><ActivityIndicator color={colors.accent} size={'large'} /></View>
+  }
   return (
-    <View style={styles.container}>
-      <View style={styles.contentContainer}>
-        <UserInfo {...user} />
-        {properties.map((e, i) => (
-          <Property {...e} key={i} />
-        ))}
-      </View>
-      {status === OrderStatus.FINISHED && (
-        <View style={styles.finishedWrapper}>
-          <Text style={styles.titleText}>{strings.clientReview}</Text>
-          <View style={styles.commentWrapper}>
-            <TextInput
-              multiline
-              numberOfLines={2}
-              placeholder={strings.leaveComment}
-            />
-          </View>
+    <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: colors.ultraLightGray }}>
+      <View style={styles.container}>
+        <View style={styles.contentContainer}>
+          <UserInfo user={item.user} />
+          <Property
+            title={properties[0].title}
+            description={typeof item.created_at === 'string' && item.created_at.slice(0, 10)}
+            rightText={typeof item.created_at === 'string' && item.created_at.slice(11)}
+          />
+          <Property
+            title={properties[1].title}
+            icon={
+              !!item && item.car_type && item.car_type.icon
+                ? item.car_type.icon
+                : properties[1].icon
+            }
+            description={
+              item.car_type
+                ? item.car_type.title
+                : properties[1].description
+            }
+          />
+          <Property title={strings.typeOfService} description={item.booking_services && item.booking_services.reduce((prev, current) => { return prev + current.service.title + '\n\n' }, "")} />
+          <Property
+            title={properties[3].title}
+            price={
+              !!item && item.total_cost ? item.total_cost : properties[3].price
+            }
+          />
         </View>
-      )}
-      <View style={styles.buttonsContainer}>
-        <View style={styles.buttonsWrapper}>{renderButtons()}</View>
+        {status === OrderStatus.FINISHED && (
+          <View style={styles.finishedWrapper}>
+            <Text style={styles.titleText}>{strings.clientReview}</Text>
+            <View style={styles.commentWrapper}>
+              <TextInput
+                multiline
+                numberOfLines={2}
+                placeholder={strings.leaveComment}
+              />
+            </View>
+          </View>
+        )}
+        <View style={styles.buttonsContainer}>
+          <View style={styles.buttonsWrapper}>{renderButtons()}</View>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -156,4 +220,15 @@ const styles = StyleSheet.create({
   },
 });
 
-export {Details};
+const mapStateToProps = (state) => ({
+
+})
+
+const mapDispatchToProps = {
+  ordersLoaded
+}
+
+
+let Connected = connect(mapStateToProps, mapDispatchToProps)(Details)
+
+export { Connected as Details };

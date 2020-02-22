@@ -4,7 +4,7 @@
 //   setCallArrived,
 // } from './../redux/actions/allActions';
 /* eslint-disable */
-import {AppState, Clipboard, Platform} from 'react-native';
+import { AppState, Clipboard, Platform } from 'react-native';
 import firebase from 'react-native-firebase';
 import requests from '../api/requests';
 
@@ -26,6 +26,7 @@ export enum NotificationActionTypes {
 }
 
 let notificationConsumer = notification => {
+  console.warn(notification.data);
   // switch (notification.data.action_type) {
   //   case NotificationActionTypes.NewCall:
   //     requests.orders
@@ -119,8 +120,8 @@ const checkPermission = async () => {
 const getToken = async () => {
   try {
     let fcmToken = await firebase.messaging().getToken();
-    Clipboard.setString(fcmToken);
-    console.log(fcmToken);
+    // Clipboard.setString(fcmToken);
+    // console.log(fcmToken);
     // requests.auth
     //   .setDeviceToken(tokenProvider(), fcmToken, Platform.OS)
     //   .catch(res => console.warn(res.response));
@@ -128,10 +129,21 @@ const getToken = async () => {
     console.warn(error);
   }
 };
+
+const getFcmToken = async () => {
+  try {
+    let fcmToken = await firebase.messaging().getToken();
+    return fcmToken;
+  }
+  catch (error) {
+    return error;
+  }
+};
+
 const requestPermission = async () => {
   try {
     await firebase.messaging().requestPermission();
-    getToken();
+    // getToken();
   } catch (error) {
     alert(
       'The app needs permission to send you status of your sold and purchased products!',
@@ -154,4 +166,4 @@ const backgroundPushes = async message => {
   return Promise.resolve();
 };
 
-export default {init, backgroundPushes, clearBadge, setState};
+export default { init, backgroundPushes, clearBadge, setState, getFcmToken };

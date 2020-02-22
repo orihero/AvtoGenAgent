@@ -5,6 +5,7 @@ import { colors } from '../constants/index';
 import Property, { PropertyProps } from '../components/common/Property';
 import UserInfo from '../components/common/UserInfo';
 import { OrderStatus } from '../views/order';
+import strings from '../locales/strings';
 
 export interface UserProps {
   name: string;
@@ -18,7 +19,7 @@ export interface OrderProps {
   // item?: OrderItem;
 }
 
-const properties = [
+export const properties = [
   {
     title: 'Дата посещения',
     rightText: '16:35',
@@ -33,14 +34,14 @@ const properties = [
     title: 'Тип услуги',
     description: 'Бесконтактная мойка кузова автомобиля, коврики пороги',
   },
-  { title: 'Цена умлуги', price: '40 000 сум' },
+  { title: 'Цена уcлуги', price: '40 000 сум' },
 ];
 
 let { width, height } = Dimensions.get('window');
 
 const OrderPill = ({ item, collapsed }: OrderProps) => {
   let [cardOn, setCardOn] = useState(false);
-  console.warn(item);
+  // console.warn(item);
   useEffect(() => {
     setCardOn(collapsed);
   }, [collapsed]);
@@ -75,18 +76,19 @@ const OrderPill = ({ item, collapsed }: OrderProps) => {
           }
           description={
             item.car_type
-              ? item.car_type.description
+              ? item.car_type.title
               : properties[1].description
           }
         />
-        <Property
+        {/* <Property
           title={properties[2].title}
           description={properties[2].description}
-        />
+        /> */}
+        <Property title={strings.typeOfService} description={item.booking_services.reduce((prev, current) => { return prev + current.service.title + '\n\n' }, "")} />
         <Property
           title={properties[3].title}
           price={
-            !!item && item.total_price ? item.total_price : properties[3].price
+            !!item && item.total_cost ? item.total_cost : properties[3].price
           }
         />
       </ScrollView>

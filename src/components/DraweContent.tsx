@@ -1,15 +1,15 @@
 import React from 'react';
-import {View, Text, StyleSheet, YellowBox, Alert} from 'react-native';
+import { View, Text, StyleSheet, YellowBox, Alert } from 'react-native';
 import Avatar from './common/Avatar';
-import {connect} from 'react-redux';
-import {colors} from '../constants/colors';
-import {FlatList} from 'react-native-gesture-handler';
+import { connect } from 'react-redux';
+import { colors } from '../constants/colors';
+import { FlatList } from 'react-native-gesture-handler';
 import YellowButton from './common/YellowButton';
-import {userLoggedOut} from '../redux/actions/action';
+import { userLoggedOut } from '../redux/actions/user';
 import DrawerItem from '../components/DrawerItem';
 import strings from '../locales/strings';
 
-const DraweContent = ({navigation, dispatch, user}) => {
+const DraweContent = ({ navigation, dispatch, user }) => {
   const menuList = [
     {
       id: 1,
@@ -29,7 +29,7 @@ const DraweContent = ({navigation, dispatch, user}) => {
     Alert.alert(strings.wait, strings.wannaLogout, [
       {
         text: strings.no,
-        onPress: () => {},
+        onPress: () => { },
         style: 'cancel',
       },
       {
@@ -58,7 +58,7 @@ const DraweContent = ({navigation, dispatch, user}) => {
         <FlatList
           data={menuList}
           keyExtractor={item => item.id.toString()}
-          renderItem={({item}) => {
+          renderItem={({ item }) => {
             return <DrawerItem item={item} />;
           }}
         />
@@ -108,8 +108,8 @@ const styles = StyleSheet.create({
   },
 });
 
-let mapStateToProps = ({user}) => {
-  return {user};
+let mapStateToProps = ({ user }) => {
+  return { user };
 };
 
 export default connect(mapStateToProps, null)(DraweContent);

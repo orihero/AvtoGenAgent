@@ -77,5 +77,6 @@ export default new LocalizedStrings({
     wait: 'Подождите',
     wannaLogout: 'Вы действительно хотите выйти?',
     visitDate: 'Дата посещения',
+    typeOfService: 'Тип услуги'
   },
 });

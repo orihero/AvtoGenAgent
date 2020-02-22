@@ -3,7 +3,7 @@ import {
   USER_LOGGED_IN,
   SET_LANGUAGE,
   USER_LOGGED_OUT,
-} from './../types';
+} from '../types';
 
 export const userLoaded = payload => ({
   type: USER_LOADED,

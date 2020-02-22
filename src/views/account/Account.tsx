@@ -1,19 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Switch, YellowBox } from 'react-native';
-import { colors } from '../../constants';
-import strings from '../../locales/strings';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Switch, View, ActivityIndicator } from 'react-native';
+import { connect } from 'react-redux';
+import request from '../../api/requests';
 import Avatar from '../../components/common/Avatar';
 import Text from '../../components/common/CustomText';
-import OrderCard, { OrderProps } from './OrderCard';
-import Modal from '../../components/Modal';
-import Header from '../../components/Header';
-import NewOrder from './NewOrder';
-import request from '../../api/requests';
 import YellowButton from '../../components/common/YellowButton';
-import RoundButton from '../../components/common/RoundButton';
-import { connect } from 'react-redux';
-import { userLoggedOut } from '../../redux/actions';
-import AsyncStorage from '@react-native-community/async-storage';
+import Modal from '../../components/Modal';
+import { colors } from '../../constants';
+import strings from '../../locales/strings';
+import { ordersLoaded } from '../../redux/actions/orders';
+import NewOrder from './NewOrder';
+import OrderCard, { OrderProps } from './OrderCard';
 
 interface AccountProps {
   navigation: any;
@@ -38,22 +35,10 @@ export let demoOrder: OrderProps = {
   ],
 };
 
-// request.profile
-//   .showProfile()
-//   .then(res => {
-//     setAccountDetails(res.data);
-//     console.warn(accountDetails);
-//   })
-//   .catch(err => {
-//     console.warn(err);
-//   });
-
-const AccountScreen = ({ navigation, dispatch, user }: AccountProps) => {
+const AccountScreen = ({ navigation, user, orders, ordersLoaded }: AccountProps) => {
   const [isActive, setisActive] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
-
   let [companyDetails, setCompanyDetails] = useState({});
-  let [ordersList, setOrdersList] = useState([]);
+  let [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // showCompany
@@ -61,38 +46,54 @@ const AccountScreen = ({ navigation, dispatch, user }: AccountProps) => {
       .showCompany()
       .then(res => {
         setCompanyDetails(res.data.data);
-        console.warn(res.data.data);
-
         //bookings
-        request.booking
-          .getAllOrders('new')
-          .then(res => {
-            console.warn(res.data.data);
-            setOrdersList(res.data.data);
-          })
-          .catch(err => {
-            console.warn('error in booking')
-            console.warn(err.response);
-          });
       })
       .catch(err => {
         console.warn('error in showCompany');
         console.warn(err.response);
         setCompanyDetails({
-          // title: strings.noCompany,
           company_address: strings.noCompany,
         });
       });
-
+    request.booking
+      .getAllOrders('accepted')
+      .then(res => {
+        ordersLoaded({ name: 'current', data: res.data.data })
+      })
+      .catch(err => {
+        console.warn('error in booking')
+        console.warn(err.response);
+      });
+    request.booking
+      .getAllOrders('new')
+      .then(res => {
+        ordersLoaded({ name: 'new', data: res.data.data })
+      })
+      .catch(err => {
+        console.warn('error in booking')
+        console.warn(err.response);
+      });
   }, []);
 
   let accept = () => {
-    setIsOpen(false);
-    navigation.navigate('Details', { item: demoOrder });
+    navigation.navigate('Details', { item: orders.new[0] });
   };
-  let decline = () => {
-    setIsOpen(false);
+  let decline = (item) => {
+    setLoading(true)
+    request.booking.reject(item.id)
+      .then(res => {
+        //* Fetch the remaining new orders
+        request.booking.getAllOrders('new').then(r => {
+          ordersLoaded({ name: 'new', data: r.data.data })
+          navigation.navigate('Account')
+        });
+      }).catch(res => {
+        console.warn(res.response);
+      }).finally(() => {
+        setLoading(false)
+      })
   };
+
   return (
     <View style={styles.wrapper}>
       <View style={styles.container}>
@@ -103,12 +104,9 @@ const AccountScreen = ({ navigation, dispatch, user }: AccountProps) => {
               onPress={() => {
                 navigation.toggleDrawer();
               }}
-            // type={'history'}
-            // onPress={() => navigation.navigate('History')}
             />
             <Avatar imageURL={user.avatar} />
             <View style={{ width: 60 }} />
-            {/* <YellowButton type={'add'} onPress={() => setIsOpen(!isOpen)} /> */}
           </View>
           <View style={styles.infoWrapper}>
             <Text style={styles.nameText}>{user.name}</Text>
@@ -128,18 +126,13 @@ const AccountScreen = ({ navigation, dispatch, user }: AccountProps) => {
               trackColor={{ true: colors.yellow, false: colors.accent }}
             />
           </View>
-          {/*  */}
           <Text style={styles.ordersText}>{strings.orders}</Text>
         </View>
       </View>
-      <OrderCard ordersList={ordersList} />
-      {/* <View style={styles.ordersWrapper}></View> */}
-      {isOpen && (
-        <Modal isOpen={isOpen}>
-          <NewOrder {...demoOrder} {...{ accept, decline }} />
-        </Modal>
-      )}
-      {/* <Header menuPress={() => navigation.navigate('History')} /> */}
+      <OrderCard ordersList={orders.current} />
+      {orders.new.length > 0 && <Modal isOpen={orders.new.length > 0}>
+        {loading ? <ActivityIndicator size={'large'} color={colors.accent} /> : <NewOrder {...orders.new[0]} {...{ accept, decline }} />}
+      </Modal>}
     </View>
   );
 };
@@ -148,20 +141,14 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: colors.ultraLightGray,
-    // paddingTop: 60,
   },
   modalContent: {
     padding: 15,
   },
   avatarWrapper: {
-    // borderWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // alignItems: 'center',
   },
-  // ordersWrapper: {
-  //   flex: 1,
-  // },
   ordersText: {
     color: colors.accent,
     fontSize: 16,
@@ -173,7 +160,6 @@ const styles = StyleSheet.create({
     height: 90,
     justifyContent: 'center',
     alignItems: 'center',
-    // marginBottom: 20,
     marginTop: 10,
   },
   sideRow: {
@@ -226,12 +212,13 @@ const styles = StyleSheet.create({
   },
 });
 
-// const mapStateToProps = ({user}) => ({user});
-
-const mapStateToProps = ({ user }) => {
-  return { user };
+const mapStateToProps = ({ user, orders }) => {
+  return { user, orders };
 };
-// const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = {
+  ordersLoaded
+};
 
-let Account = connect(mapStateToProps, null)(AccountScreen);
+let Account = connect(mapStateToProps, mapDispatchToProps)(AccountScreen);
 export { Account };
+
