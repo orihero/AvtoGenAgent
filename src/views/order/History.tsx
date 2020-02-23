@@ -1,13 +1,14 @@
-import React, {useState} from 'react';
-import {StyleSheet, View, FlatList} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, FlatList } from 'react-native';
 import RoundButton, {
   RoundButtonProps,
 } from '../../components/common/RoundButton';
-import {colors} from '../../constants';
+import { colors } from '../../constants';
 import strings from '../../locales/strings';
 import OrderItem from './OrderItem';
-import {demoOrder} from '../account/Account';
+import { demoOrder } from '../account/Account';
 import OrderPill from '../../components/OrderPill';
+import request from '../../api/requests';
 
 let activeButton: RoundButtonProps = {
   backgroundColor: colors.yellow,
@@ -21,7 +22,14 @@ let inActiveButton: RoundButtonProps = {
 
 const History = () => {
   const [activeIndex, setactiveIndex] = useState(0);
-
+  const [data, setData] = useState([]);
+  let effect = async () => {
+    let res = await request.booking.getAllOrders('done');
+    setData(res.data.data)
+  }
+  useEffect(() => {
+    effect()
+  }, [])
   return (
     <View style={styles.container}>
       <View style={styles.row}>
@@ -42,8 +50,8 @@ const History = () => {
       </View>
       <FlatList
         keyExtractor={(e, i) => i.toString()}
-        renderItem={({item, ...props}) => <OrderPill {...props} {...item} />}
-        data={[demoOrder, demoOrder, demoOrder, demoOrder]}
+        renderItem={({ item, ...props }) => <OrderPill {...props} {...{ item }} />}
+        data={data}
       />
     </View>
   );
@@ -60,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export {History};
+export { History };

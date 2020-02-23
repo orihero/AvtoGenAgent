@@ -14,6 +14,7 @@ interface NewOrderProps {
 }
 
 const NewOrder = ({ accept, decline, ...item }: NewOrderProps) => {
+  console.warn(item.time);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -22,8 +23,8 @@ const NewOrder = ({ accept, decline, ...item }: NewOrderProps) => {
       </View>
       <Property
         title={properties[0].title}
-        description={typeof item.created_at === 'string' && item.created_at.slice(0, 10)}
-        rightText={typeof item.created_at === 'string' && item.created_at.slice(11)}
+        description={typeof item.time === 'string' && item.time.split(" ")[0]}
+        rightText={typeof item.time === 'string' && item.time.split(" ")[1]}
       />
       <Property
         title={properties[1].title}

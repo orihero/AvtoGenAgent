@@ -1,12 +1,7 @@
-// import {
-//   setCall,
-//   setActiveCalls,
-//   setCallArrived,
-// } from './../redux/actions/allActions';
-/* eslint-disable */
-import { AppState, Clipboard, Platform } from 'react-native';
+import { ordersLoaded } from './../redux/actions/orders';
+import { AppState } from 'react-native';
 import firebase from 'react-native-firebase';
-import requests from '../api/requests';
+import request from '../api/requests';
 
 let store = null;
 
@@ -25,47 +20,47 @@ export enum NotificationActionTypes {
   CallCompleted = 'call_completed',
 }
 
-let notificationConsumer = notification => {
+let notificationConsumer = async notification => {
   console.warn(notification.data);
-  // switch (notification.data.action_type) {
-  //   case NotificationActionTypes.NewCall:
-  //     requests.orders
-  //       .getCalls(tokenProvider())
-  //       .then(res => {
-  //         store.dispatch(setActiveCalls(res.data.data));
-  //       })
-  //       .catch(res => {
-  //         console.warn(res.response);
-  //       });
-  //     break;
-  //   case NotificationActionTypes.CallCancelled:
-  //     requests.orders
-  //       .getCall(notification.data.call, tokenProvider())
-  //       .then(res => {
-  //         store.dispatch(setCall(res.data.data));
-  //       })
-  //       .catch(res => {
-  //         console.warn(res.response);
-  //       });
-  //     break;
-  //   case NotificationActionTypes.CallCompleted:
-  //     requests.orders
-  //       .getCall(notification.data.call, tokenProvider())
-  //       .then(res => {
-  //         store.dispatch(setCall(res.data.data));
-  //       })
-  //       .catch(res => {
-  //         console.warn(res.response);
-  //       });
-  //     break;
-  //   case NotificationActionTypes.DriverArrived:
-  //     store.dispatch(setCallArrived(true));
-  //     break;
-  //   default:
-  //     console.warn('UNHANDLED ACTION');
-  //     console.warn(notification.data);
-  //     break;
-  // }
+  switch (notification.data.actionType) {
+    case 'new': {
+      request.booking
+        .getAllOrders('new')
+        .then(res => {
+          store.dispatch(ordersLoaded({ name: 'new', data: res.data.data }))
+        })
+        .catch(err => {
+          console.warn('error in booking')
+          console.warn(err.response);
+        });
+      return;
+    }
+    default:
+      console.warn('UNHANDLED ACTION');
+      console.warn(notification.data);
+      request.booking.getAllOrders('new').then(r => {
+        store.dispatch(ordersLoaded({ name: 'new', data: r.data.data }))
+        request.booking
+          .getAllOrders('processing')
+          .then(r => {
+            // ordersLoaded({ name: 'current', data: [...orders.current, ...res.data.data] })
+            request.booking
+              .getAllOrders('arrived')
+              .then(res => {
+                store.dispatch(ordersLoaded({ name: 'current', data: [...res.data.data, ...r.data.data,] }));
+              })
+              .catch(err => {
+                console.warn('error in booking')
+                console.warn(err.response);
+              });
+          })
+          .catch(err => {
+            console.warn('error in booking')
+            console.warn(err.response);
+          });
+      });
+      break;
+  }
 };
 
 function init() {

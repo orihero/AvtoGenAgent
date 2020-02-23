@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableWithoutFeedback} from 'react-native';
-import {measures, colors} from '../../constants';
+import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { measures, colors } from '../../constants';
 
 export interface RoundButtonProps {
   fill?: boolean;
@@ -33,14 +33,14 @@ const RoundButton = ({
           fill && styles.fill,
           full && styles.full,
           big && styles.big,
-          flex && {flex: 1},
-          {backgroundColor, borderColor},
+          flex && { flex: 1 },
+          { backgroundColor, borderColor },
         ]}>
         <Text
           style={[
             styles.textBase,
             fill && styles.textFill,
-            textColor && {color: textColor},
+            textColor && { color: textColor },
           ]}>
           {text}
         </Text>
@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
       height: 5,
     },
     elevation: 2,
+    justifyContent: 'center'
   },
   full: {
     justifyContent: 'center',

@@ -44,6 +44,7 @@ let request = {
       axios.get(`${URL}/booking/agent-books?status=${status}`),
     accept: (id) => axios.get(`${URL}/booking/accept-book/${id}`),
     reject: (id) => axios.get(`${URL}/booking/reject-book/${id}`),
+    setStatus: (id, status) => axios.post(`${URL}/booking/set-status-book`, formData({ booking_id: id, status }))
   },
 };
 
