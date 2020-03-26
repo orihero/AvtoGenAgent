@@ -72,7 +72,7 @@
 // export default OrderCard;
 
 //mutal's fucking UI
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -82,18 +82,18 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import { colors } from '../../constants/colors';
-import { Icons } from '../../constants/icons';
+import {colors} from '../../constants/colors';
+import {Icons} from '../../constants/icons';
 import RoundButton from '../../components/common/RoundButton';
 import strings from '../../locales/strings';
-import { PanGestureHandler, State, FlatList } from 'react-native-gesture-handler';
+import {PanGestureHandler, State, FlatList} from 'react-native-gesture-handler';
 import Text from '../../components/common/CustomText';
 import OrderPill from '../../components/OrderPill';
-import { demoOrder } from './Account';
-import { commonStyles } from '../../constants';
+import {demoOrder} from './Account';
+import {commonStyles} from '../../constants';
 
-const OrderCard = ({ onPress, ordersList }) => {
-  let { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
+const OrderCard = ({onPress, ordersList}) => {
+  let {height: deviceHeight, width: deviceWidth} = Dimensions.get('window');
 
   let isExpanded = false;
   const [expanded, setExpanded] = useState(false);
@@ -105,16 +105,16 @@ const OrderCard = ({ onPress, ordersList }) => {
       },
     },
   ]);
-  let onHandlerStateChange = ({ nativeEvent }) => {
+  let onHandlerStateChange = ({nativeEvent}) => {
     if (nativeEvent.oldState === State.ACTIVE) {
       if (nativeEvent.translationY > 0) {
-        Animated.spring(height, { toValue: deviceHeight }).start(() => {
+        Animated.spring(height, {toValue: deviceHeight}).start(() => {
           isExpanded = false;
           height.setOffset(0);
           height.setValue(0);
         });
       } else {
-        Animated.spring(height, { toValue: 80 - deviceHeight }).start(() => {
+        Animated.spring(height, {toValue: 80 - deviceHeight}).start(() => {
           isExpanded = true;
           height.setOffset(80 - deviceHeight);
           height.setValue(0);
@@ -156,19 +156,26 @@ const OrderCard = ({ onPress, ordersList }) => {
             showsVerticalScrollIndicator={false}
             style={{
               height: contentHeight,
-              // maxHeight: 400,
             }}>
-            {/* {!!ordersList && */}
-            {/* ordersList.map((order, index) => { */}
             <FlatList
               data={ordersList}
-              renderItem={({ item, ...props }) => (
+              renderItem={({item, ...props}) => (
                 <OrderPill item={item} {...props} collapsed={true} />
               )}
               keyExtractor={e => e.id.toString()}
-              ListEmptyComponent={() => (<View style={commonStyles.centeredContainer}><Text style={{ fontWeight: 'bold', marginTop: 20, ...styles.mainText }}>{strings.noOrders}</Text></View>)}
+              ListEmptyComponent={() => (
+                <View style={commonStyles.centeredContainer}>
+                  <Text
+                    style={{
+                      fontWeight: 'bold',
+                      marginTop: 20,
+                      ...styles.mainText,
+                    }}>
+                    {strings.noOrders}
+                  </Text>
+                </View>
+              )}
             />
-            {/* })} */}
           </Animated.ScrollView>
         </View>
       </Animated.View>
@@ -177,7 +184,7 @@ const OrderCard = ({ onPress, ordersList }) => {
 };
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row' },
+  row: {flexDirection: 'row'},
   container: {
     backgroundColor: colors.white,
     position: 'absolute',
