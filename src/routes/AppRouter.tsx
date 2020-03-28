@@ -4,7 +4,7 @@ import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import {Account, Details, History, Loader, Login, FillInfo} from '../views';
 import InnerHeader from '../components/InnerHeader';
-import DrawerContent from '../components/DraweContent';
+import DrawerContent from '../components/DrawerContent';
 import strings from '../locales/strings';
 import {createDrawerNavigator} from 'react-navigation-drawer';
 

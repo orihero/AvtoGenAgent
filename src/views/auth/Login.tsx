@@ -162,11 +162,12 @@ const Login = ({navigation, userLoggedIn}) => {
         <View>
           {buttons.map((e, i) => {
             return (
-              <View style={styles.row}>
+              <View style={styles.row} key={'view' + i}>
                 {e.map((el, index) => {
                   count++;
                   return (
                     <TouchableWithoutFeedback
+                        key={'touch' + index}
                       onPress={() =>
                         confirmed
                           ? setCode(code + (i * 3 + index + 1).toString())

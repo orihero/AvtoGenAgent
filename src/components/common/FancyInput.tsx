@@ -35,14 +35,14 @@ const FancyInput = ({
   let counter = 0;
   return (
     <View style={styles.container}>
-      {generateContent().map(({type, content}) => {
+      {generateContent().map(({type, content}, index) => {
         switch (type) {
           case 'text':
-            return <Text style={styles.text}>{content}</Text>;
+            return <Text key={'fancy' + index} style={styles.text}>{content}</Text>;
           case 'input':
             counter++;
             return (
-              <Text style={styles.text}>
+              <Text key={'fancy' + index} style={styles.text}>
                 {value[counter - 1] ? value[counter - 1] : '_'}
               </Text>
             );

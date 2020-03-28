@@ -11,7 +11,8 @@ const DrawerItem = ({item, navigation}) => {
     <>
       <TouchableWithoutFeedback
         onPress={() => {
-          navigation.navigate(item.to);
+          item.to && navigation.navigate(item.to);
+          item.handler && item.handler()
         }}>
         <View style={styles.container}>
           <SimpleLineIcons
