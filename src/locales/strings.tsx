@@ -82,6 +82,7 @@ export default new LocalizedStrings({
 		add: "Дабавить",
 		loading: "Загрузка",
 		cancel: "Отменить",
-		success: "Успешно"
+		success: "Успешно",
+		history: "История"
 	}
 });

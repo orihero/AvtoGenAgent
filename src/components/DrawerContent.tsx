@@ -41,13 +41,13 @@ const DrawerContent = ({ navigation, dispatch, user }) => {
 		{
 			id: 1,
 			type: "clock",
-			name: "History",
+			name: strings.history,
 			to: "History"
 		},
 		{
 			id: 2,
 			type: "plus",
-			name: "Add",
+			name: strings.add,
 			to: "",
 			handler: () => setIsOpen(true)
 		}
