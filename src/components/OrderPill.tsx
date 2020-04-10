@@ -8,7 +8,7 @@ import { OrderStatus } from "../views/order";
 import strings from "../locales/strings";
 import RoundButton from "./common/RoundButton";
 import { withNavigation } from "react-navigation";
-import { NavigationProps } from "../utils/defaultPropTypes";
+import { NavigationProps } from "../../utils/defaultPropTypes";
 
 export interface UserProps {
 	name: string;

@@ -18,7 +18,7 @@ import { userLoggedOut } from "../redux/actions";
 import DrawerItem from "../components/DrawerItem";
 import strings from "../locales/strings";
 import request from "../api/requests";
-import { warnUser } from "../utils/warn";
+import { warnUser } from "../../utils/warn";
 
 const DrawerContent = ({ navigation, dispatch, user }) => {
 	const [isOpen, setIsOpen] = useState(false);

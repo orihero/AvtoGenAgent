@@ -1,7 +1,7 @@
-import { ordersLoaded } from "./../redux/actions/orders";
+import { ordersLoaded } from "../src/redux/actions/orders";
 import { AppState } from "react-native";
 import firebase from "react-native-firebase";
-import request from "../api/requests";
+import request from "../src/api/requests";
 
 let store = null;
 
