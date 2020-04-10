@@ -27,24 +27,15 @@ const Loader = ({ navigation, userLoaded }) => {
 			return;
 		}
 		userLoaded(userData);
-		// console.warn(userData.token);
-		if (userData.name) {
-			try {
-				NotificationService.init();
-				let fcm_token = await NotificationService.getFcmToken();
-				let res = await request.profile.setFcmToken({ fcm_token });
-			} catch (error) {
-				navigation.navigate("Login");
-				return;
-			}
-			navigation.navigate("Account");
-		} else {
-			navigation.navigate("FillInfo");
+		try {
+			NotificationService.init();
+			let fcm_token = await NotificationService.getFcmToken();
+			let res = await request.profile.setFcmToken({ fcm_token });
+		} catch (error) {
+			navigation.navigate("Login");
+			return;
 		}
-		//set language
-		// strings.setLanguage(settings.language);
-		// userLoaded(userData);
-		// navigation.navigate('Account');
+		navigation.navigate("Account");
 	};
 	useEffect(() => {
 		bootstrap();

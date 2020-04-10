@@ -1,24 +1,24 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
-	View,
-	Text,
-	StyleSheet,
 	Alert,
-	Picker,
 	Modal,
-	TouchableNativeFeedback
+	Picker,
+	StyleSheet,
+	Text,
+	TouchableNativeFeedback,
+	View
 } from "react-native";
-import Avatar from "./common/Avatar";
 import CheckBox from "react-native-check-box";
-import { connect } from "react-redux";
-import { colors } from "../constants";
 import { FlatList } from "react-native-gesture-handler";
-import YellowButton from "./common/YellowButton";
-import { userLoggedOut } from "../redux/actions";
-import DrawerItem from "../components/DrawerItem";
-import strings from "../locales/strings";
-import request from "../api/requests";
+import { connect } from "react-redux";
 import { warnUser } from "../../utils/warn";
+import request from "../api/requests";
+import DrawerItem from "../components/DrawerItem";
+import { colors } from "../constants";
+import strings from "../locales/strings";
+import { userLoggedOut } from "../redux/actions";
+import Avatar from "./common/Avatar";
+import YellowButton from "./common/YellowButton";
 
 const DrawerContent = ({ navigation, dispatch, user }) => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -203,7 +203,11 @@ const DrawerContent = ({ navigation, dispatch, user }) => {
 						</Text>
 					</View>
 					<View style={styles.avatarWrapper}>
-						<Avatar imageURL={user.avatar} size={100} notEdit />
+						<Avatar
+							imageURL={user.avatar || ""}
+							size={100}
+							notEdit
+						/>
 					</View>
 				</View>
 				<View style={styles.bottom}>
