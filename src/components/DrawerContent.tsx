@@ -6,7 +6,8 @@ import {
 	StyleSheet,
 	Text,
 	TouchableNativeFeedback,
-	View
+	View,
+	TouchableWithoutFeedback
 } from "react-native";
 import CheckBox from "react-native-check-box";
 import { FlatList } from "react-native-gesture-handler";
@@ -22,7 +23,7 @@ import YellowButton from "./common/YellowButton";
 
 const DrawerContent = ({ navigation, dispatch, user }) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const [selectedCarType, setSelectedCarType] = useState();
+	const [selectedCarType, setSelectedCarType] = useState("");
 	const [services, setServices] = useState([]);
 	const [carTypes, setCarTypes] = useState([]);
 	const [selectedServices, setSelectedServices] = useState({});
@@ -115,7 +116,7 @@ const DrawerContent = ({ navigation, dispatch, user }) => {
 						</Text>
 					</View>
 					<View style={styles.form}>
-						<Text style={{ marginTop: 20 }}>Chooser car type</Text>
+						<Text style={{ marginTop: 20 }}>{strings.carType}</Text>
 						<Picker
 							style={{ marginBottom: 20 }}
 							selectedValue={selectedCarType}
@@ -125,7 +126,7 @@ const DrawerContent = ({ navigation, dispatch, user }) => {
 						>
 							{carTypes.map(carType => (
 								<Picker.Item
-									label={carType.title}
+									label={carType.title || carType.type || ""}
 									value={carType.id}
 								/>
 							))}
@@ -138,7 +139,7 @@ const DrawerContent = ({ navigation, dispatch, user }) => {
 										marginBottom: 20
 									}}
 								>
-									<TouchableNativeFeedback
+									<TouchableWithoutFeedback
 										onPress={() =>
 											checkBoxHandler(service.id)
 										}
@@ -151,7 +152,7 @@ const DrawerContent = ({ navigation, dispatch, user }) => {
 										>
 											{service.title}
 										</Text>
-									</TouchableNativeFeedback>
+									</TouchableWithoutFeedback>
 									<CheckBox
 										isChecked={selectedServices[service.id]}
 										onClick={() =>

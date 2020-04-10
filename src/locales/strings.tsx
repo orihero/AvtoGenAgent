@@ -83,6 +83,7 @@ export default new LocalizedStrings({
 		loading: "Загрузка",
 		cancel: "Отменить",
 		success: "Успешно",
-		history: "История"
+		history: "История",
+		carType: "Тип автомобиля"
 	}
 });
