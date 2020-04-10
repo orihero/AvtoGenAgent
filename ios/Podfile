@@ -34,7 +34,10 @@ target 'AvtoGenAgent' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  pod 'RNFirebase', :path => '../node_modules/react-native-firebase'
+  pod 'RNFirebase', :path => '../node_modules/react-native-firebase/ios'
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Messaging'
+
 
   target 'AvtoGenAgentTests' do
     inherit! :search_paths
