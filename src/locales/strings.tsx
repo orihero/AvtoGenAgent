@@ -92,6 +92,8 @@ export default new LocalizedStrings({
 		new: "Новый",
 		accepted: "Принятый",
 		canceled: "Отменен",
-		done: "Законченный"
+		done: "Законченный",
+		rating: "Рейтинг",
+		comment: "Комментарий"
 	}
 });

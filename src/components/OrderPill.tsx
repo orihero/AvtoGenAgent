@@ -56,7 +56,7 @@ const OrderPill = ({
 	let onStart = () => {
 		navigation.navigate("Details", { item });
 	};
-
+	console.log(item);
 	return (
 		<View
 			style={[
@@ -110,6 +110,18 @@ const OrderPill = ({
 					title={strings.status}
 					rightText={strings[item.status]}
 				/>
+				{!!item.comment && (
+					<>
+						<Property
+							title={strings.rating}
+							rightText={item.comment.evaluation}
+						/>
+						<Property
+							title={strings.comment}
+							description={item.comment.comment}
+						/>
+					</>
+				)}
 				{item.status === "accepted" && (
 					<View style={styles.row}>
 						<Property
