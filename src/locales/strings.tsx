@@ -40,15 +40,13 @@ export default new LocalizedStrings({
 		russian: "Русский",
 		english: "English",
 		uzbek: "O`zbek",
-		enterPhoneNumber: `Введите номер телефона 
-для авторизации`,
+		enterPhoneNumber: `Введите номер телефона`,
 		language: "Языковая версия",
 		userInfo: "Персональные данные",
 		name: "Введите имя",
 		surname: "Введите фамилию",
 		skip: "Пропустить",
-		confirmCode: `Введите присланный вам
-смс код `,
+		confirmCode: `Введите смс код `,
 		second: "сек",
 		connectionError: "Соединение прервано",
 		somethingWentWrong: "Что то пошло не так!",
@@ -84,6 +82,16 @@ export default new LocalizedStrings({
 		cancel: "Отменить",
 		success: "Успешно",
 		history: "История",
-		carType: "Тип автомобиля"
+		carType: "Тип автомобиля",
+		continue: "Продолжить",
+		youAreSubscribed: "Вы записаны через 1 минут на автомойку",
+		acceptAgreement: "Нажимая кнопку «Продолжить» я принимаю условия",
+		pravicyAgreemnt: "Пользовательского соглашения",
+		canClaimCodeIn: "Введите код ",
+		status: "Статус",
+		new: "Новый",
+		accepted: "Принятый",
+		canceled: "Отменен",
+		done: "Законченный"
 	}
 });

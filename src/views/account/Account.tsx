@@ -75,21 +75,24 @@ const AccountScreen = ({
 				});
 			});
 		request.booking
-			.getAllOrders("processing")
+			.getAllOrders("accepted")
 			.then(r => {
-				// ordersLoaded({ name: 'current', data: [...orders.current, ...res.data.data] })
-				request.booking
-					.getAllOrders("arrived")
-					.then(res => {
-						ordersLoaded({
-							name: "current",
-							data: [...res.data.data, ...r.data.data]
-						});
-					})
-					.catch(err => {
-						console.warn("error in booking");
-						console.warn(err.response);
-					});
+				ordersLoaded({
+					name: "current",
+					data: r.data.data
+				});
+				// request.booking
+				// 	.getAllOrders("arrived")
+				// 	.then(res => {
+				// 		ordersLoaded({
+				// 			name: "current",
+				// 			data: [...res.data.data, ...r.data.data]
+				// 		});
+				// 	})
+				// 	.catch(err => {
+				// 		console.warn("error in booking");
+				// 		console.warn(err.response);
+				// 	});
 			})
 			.catch(err => {
 				console.warn("error in booking");

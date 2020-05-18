@@ -37,23 +37,14 @@ const Details = ({ navigation, parentStatus, ordersLoaded }) => {
 		setLoading(true);
 		try {
 			let res = await request.booking.setStatus(item.id, status);
-			setItem(res.data.data);
+			await fetchOrders();
 			request.booking
-				.getAllOrders("processing")
+				.getAllOrders("accepted")
 				.then(r => {
-					// ordersLoaded({ name: 'current', data: [...orders.current, ...res.data.data] })
-					request.booking
-						.getAllOrders("arrived")
-						.then(res => {
-							ordersLoaded({
-								name: "current",
-								data: [...res.data.data, ...r.data.data]
-							});
-						})
-						.catch(err => {
-							console.warn("error in booking");
-							console.warn(err.response);
-						});
+					ordersLoaded({
+						name: "current",
+						data: r.data.data
+					});
 				})
 				.catch(err => {
 					console.warn("error in booking");
@@ -75,21 +66,12 @@ const Details = ({ navigation, parentStatus, ordersLoaded }) => {
 					ordersLoaded({ name: "new", data: r.data.data });
 					navigation.navigate("Account");
 					request.booking
-						.getAllOrders("processing")
+						.getAllOrders("accepted")
 						.then(r => {
-							// ordersLoaded({ name: 'current', data: [...orders.current, ...res.data.data] })
-							request.booking
-								.getAllOrders("arrived")
-								.then(res => {
-									ordersLoaded({
-										name: "current",
-										data: [...res.data.data, ...r.data.data]
-									});
-								})
-								.catch(err => {
-									console.warn("error in booking");
-									console.warn(err.response);
-								});
+							ordersLoaded({
+								name: "current",
+								data: r.data.data
+							});
 						})
 						.catch(err => {
 							console.warn("error in booking");
@@ -111,24 +93,6 @@ const Details = ({ navigation, parentStatus, ordersLoaded }) => {
 			request.booking.getAllOrders("new").then(r => {
 				ordersLoaded({ name: "new", data: r.data.data });
 				navigation.navigate("Account");
-				// request.booking
-				//     .getAllOrders('processing')
-				//     .then(r => {
-				//         // ordersLoaded({ name: 'current', data: [...orders.current, ...res.data.data] })
-				//         request.booking
-				//             .getAllOrders('arrived')
-				//             .then(res => {
-				//                 ordersLoaded({ name: 'current', data: [...res.data.data, ...r.data.data,] })
-				//             })
-				//             .catch(err => {
-				//                 console.warn('error in booking')
-				//                 console.warn(err.response);
-				//             });
-				//     })
-				//     .catch(err => {
-				//         console.warn('error in booking')
-				//         console.warn(err.response);
-				//     });
 			});
 		} catch (error) {
 			console.warn(error);
@@ -145,28 +109,19 @@ const Details = ({ navigation, parentStatus, ordersLoaded }) => {
 				request.booking.getAllOrders("new").then(r => {
 					ordersLoaded({ name: "new", data: r.data.data });
 					navigation.navigate("Account");
-					//   request.booking
-					//     .getAllOrders('processing')
-					//     .then(r => {
-					//       // ordersLoaded({ name: 'current', data: [...orders.current, ...res.data.data] })
-					//       request.booking
-					//         .getAllOrders('arrived')
-					//         .then(res => {
-					//           ordersLoaded({
-					//             name: 'current',
-					//             data: [...res.data.data, ...r.data.data],
-					//           });
-					//         })
-					//         .catch(err => {
-					//           console.warn('error in booking');
-					//           console.warn(err.response);
-					//         });
-					//     })
-					//     .catch(err => {
-					//       console.warn('error in booking');
-					//       console.warn(err.response);
-					//     });
 				});
+				request.booking
+					.getAllOrders("accepted")
+					.then(r => {
+						ordersLoaded({
+							name: "current",
+							data: r.data.data
+						});
+					})
+					.catch(err => {
+						console.warn("error in booking");
+						console.warn(err.response);
+					});
 			})
 			.catch(res => {
 				console.warn(res.response);
@@ -199,39 +154,6 @@ const Details = ({ navigation, parentStatus, ordersLoaded }) => {
 						/>
 					</Fragment>
 				);
-			// case "arrived":
-			// 	return (
-			// 		<RoundButton
-			// 			text={strings.start}
-			// 			fill
-			// 			full
-			// 			flex
-			// 			onPress={() => proceed("processing")}
-			// 			backgroundColor={colors.yellow}
-			// 		/>
-			// 	);
-			// case "processing":
-			// 	return (
-			// 		<RoundButton
-			// 			text={strings.finish}
-			// 			fill
-			// 			full
-			// 			flex
-			// 			onPress={() => proceed("done")}
-			// 			backgroundColor={colors.yellow}
-			// 		/>
-			// 	);
-			// case "done":
-			// 	return (
-			// 		<RoundButton
-			// 			text={strings.ready}
-			// 			fill
-			// 			full
-			// 			flex
-			// 			onPress={fetchOrders}
-			// 			backgroundColor={colors.yellow}
-			// 		/>
-			// 	);
 			default:
 				return (
 					<RoundButton
@@ -239,7 +161,7 @@ const Details = ({ navigation, parentStatus, ordersLoaded }) => {
 						fill
 						full
 						flex
-						onPress={fetchOrders}
+						onPress={() => proceed("done")}
 						backgroundColor={colors.yellow}
 					/>
 				);
@@ -367,6 +289,9 @@ const mapDispatchToProps = {
 	ordersLoaded
 };
 
-let Connected = connect(mapStateToProps, mapDispatchToProps)(Details);
+let Connected = connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Details);
 
 export { Connected as Details };

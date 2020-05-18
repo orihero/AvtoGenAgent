@@ -3,24 +3,22 @@ import {
 	Dimensions,
 	StyleSheet,
 	Text,
-	TouchableWithoutFeedback,
-	View
+	View,
+	Image,
+	TextInput,
+	Linking
 } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
-import Icons from "react-native-vector-icons/Feather";
 import { connect } from "react-redux";
 import requests from "../../api/requests";
-import FancyInput from "../../components/common/FancyInput";
 import RoundButton from "../../components/common/RoundButton";
 import { colors } from "../../constants";
 import strings from "../../locales/strings";
 import { userLoggedIn } from "../../redux/actions";
+import logo from "../../assets/images/logo.png";
+import NotificationService from "../../../utils/NotificationService";
 
-let buttons = [
-	Array.from({ length: 3 }, (v, k) => k + 1),
-	Array.from({ length: 3 }, (v, k) => k + 1),
-	Array.from({ length: 3 }, (v, k) => k + 1)
-];
+let { width } = Dimensions.get("window");
 
 const Login = ({ navigation, userLoggedIn }) => {
 	const [value, setvalue] = useState("");
@@ -32,22 +30,25 @@ const Login = ({ navigation, userLoggedIn }) => {
 	const [loading, setLoading] = useState(false);
 	let count = 0;
 
+	let onPhoneFocus = () => {
+		setvalue("+998");
+	};
+
 	let getCode = () => {
 		if (value.length < 9) {
 			setError(strings.fillAllFields);
 			return;
 		}
 		requests.auth
-			.login({ phone: "998" + value, role: "agent" })
+			.login({ phone: value.substr(1, value.length), role: "agent" })
 			.then(res => {
-				setData(res.data.data);
-				if (value === "900000002") {
-					confirmCode(res.data.data.code, res.data.data);
-				}
 				console.warn(res.data.data);
+				setData(res.data.data);
 			})
 			.catch(res => {
+				console.warn(res.response);
 				if (!res.response) {
+					console.warn(res.response);
 					setError(strings.connectionError);
 					return;
 				}
@@ -65,39 +66,42 @@ const Login = ({ navigation, userLoggedIn }) => {
 		setConfirmed(!confirmed);
 	};
 
-	let confirmCode = (localCode = code, localData = data) => {
-		if (localCode.length < 5) {
+	let confirmCode = async () => {
+		if (code.length < 5) {
 			setError(strings.fillAllFields);
 			return;
 		}
 		setLoading(true);
-		requests.auth
-			.verifyCode(localData.user_id, {
-				code: localCode
-			})
-			.then(res => {
-				userLoggedIn(res.data.data);
-				navigation.navigate("Account");
-			})
-			.catch(res => {
-				console.warn(data);
-
-				if (!res.response) {
-					setError(strings.connectionError);
-					return;
-				}
-				let { response } = res;
-				if (response.data) {
-					setError(
-						response.data.message
-							? response.data.message
-							: strings.somethingWentWrong
-					);
-					return;
-				}
-				setError(strings.somethingWentWrong);
-			})
-			.finally(() => setLoading(false));
+		console.log({ id: data.user_id, code });
+		try {
+			let res = await requests.auth.verifyCode(data.user_id, { code });
+			userLoggedIn(res.data.data);
+			NotificationService.init();
+			let fcm_token = await NotificationService.getFcmToken();
+			let r = await requests.profile.setFcmToken({
+				fcm_token
+			});
+			navigation.navigate("Account");
+		} catch (res) {
+			console.warn(res.response);
+			if (!res.response) {
+				console.warn(res.response);
+				setError(strings.connectionError);
+				return;
+			}
+			let { response } = res;
+			if (response.data) {
+				setError(
+					response.data.message
+						? response.data.message
+						: strings.somethingWentWrong
+				);
+				return;
+			}
+			setError(strings.somethingWentWrong);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	useEffect(() => {
@@ -124,135 +128,81 @@ const Login = ({ navigation, userLoggedIn }) => {
 		}
 	});
 
+	let validInputs = value.length >= 13 || confirmed;
+
 	return (
 		<SafeAreaView style={styles.container}>
-			<View style={styles.infoWrapper}>
-				<Text style={styles.appName}>AvtoGen</Text>
-				<Text style={styles.text}>
-					{confirmed ? strings.confirmCode : strings.enterPhoneNumber}
-				</Text>
-				<Text style={styles.dangerText}>{error}</Text>
-				<View
-					style={[
-						styles.inputWrapper,
-						!confirmed && { justifyContent: "center" }
-					]}
-				>
-					<FancyInput
-						value={confirmed ? code : value}
-						exceedController={setvalue}
-						pattern={
-							confirmed
-								? "_ _ _ _ _"
-								: "+998|(_ _) _ _ _  _ _  _ _"
+			<View style={styles.centeredFlex}>
+				<Image source={logo} style={styles.logo} />
+			</View>
+			<View style={[styles.centeredFlex, { width }]}>
+				<TextInput
+					style={styles.phoneInput}
+					placeholder={
+						!confirmed
+							? strings.enterPhoneNumber
+							: strings.confirmCode
+					}
+					maxLength={13}
+					onFocus={onPhoneFocus}
+					value={!confirmed ? value : code}
+					keyboardType={"phone-pad"}
+					onChangeText={e => {
+						if (confirmed) {
+							setCode(e);
+							return;
 						}
-					/>
-					{confirmed && (
+						if (value === "+998" && e.length < value.length) {
+							return;
+						}
+						setvalue(e);
+					}}
+				/>
+				{confirmed ? (
+					<Text style={styles.text}>
+						{strings.canClaimCodeIn}
+						{` ${counter}`}
+					</Text>
+				) : null}
+				{error ? <Text style={styles.dangerText}>{error}</Text> : null}
+			</View>
+			<View style={styles.flexSpaced}>
+				<View
+					style={{
+						flexDirection: "row",
+						padding: 30,
+						flexShrink: 1,
+						flexWrap: "wrap"
+					}}
+				>
+					<Text style={styles.agreementText}>
+						{strings.acceptAgreement}{" "}
 						<Text
 							style={{
-								color: colors.white
+								color: colors.black,
+								textAlign: "center",
+								fontWeight: "bold"
 							}}
-						>{`${counter} ${strings.second}`}</Text>
-					)}
-				</View>
-			</View>
-			<View style={styles.buttonsContainer}>
-				<View>
-					{buttons.map((e, i) => {
-						return (
-							<View style={styles.row} key={"view" + i}>
-								{e.map((el, index) => {
-									count++;
-									return (
-										<TouchableWithoutFeedback
-											key={"touch" + index}
-											onPress={() =>
-												confirmed
-													? setCode(
-															code +
-																(
-																	i * 3 +
-																	index +
-																	1
-																).toString()
-													  )
-													: setvalue(
-															value +
-																(
-																	i * 3 +
-																	index +
-																	1
-																).toString()
-													  )
-											}
-										>
-											<View
-												style={
-													styles.squareButtonContainer
-												}
-											>
-												<Text style={styles.buttonText}>
-													{count}
-												</Text>
-											</View>
-										</TouchableWithoutFeedback>
-									);
-								})}
-							</View>
-						);
-					})}
-					<View style={styles.row}>
-						<TouchableWithoutFeedback
 							onPress={() =>
-								confirmed
-									? setCode(code + "0")
-									: setvalue(value + "0")
+								Linking.openURL("https://avtogen.uz")
 							}
 						>
-							<View style={styles.squareButtonContainer}>
-								<Text style={styles.buttonText}>0</Text>
-							</View>
-						</TouchableWithoutFeedback>
-						<TouchableWithoutFeedback
-							onPress={() =>
-								confirmed
-									? setCode(code.substr(0, code.length - 1))
-									: setvalue(
-											value.substr(0, value.length - 1)
-									  )
-							}
-						>
-							<View
-								style={{
-									justifyContent: "center",
-									alignItems: "center",
-									width: 60,
-									height: 60,
-									margin: 5
-								}}
-							>
-								<Icons
-									name="delete"
-									size={40}
-									color={colors.white}
-								/>
-							</View>
-						</TouchableWithoutFeedback>
-					</View>
+							{strings.pravicyAgreemnt}
+						</Text>
+					</Text>
 				</View>
 				<RoundButton
-					text={strings.confirm}
+					backgroundColor={
+						validInputs ? colors.accent : colors.extraGray
+					}
 					fill
+					text={strings.continue}
+					textColor={validInputs ? colors.white : colors.accent}
 					full
 					loading={loading}
-					backgroundColor={colors.white}
-					onPress={() => {
-						if (confirmed) {
-							confirmCode(code);
-						} else {
-							getCode();
-						}
-					}}
+					big
+					onPress={!confirmed ? getCode : confirmCode}
+					disabled={!validInputs}
 				/>
 			</View>
 		</SafeAreaView>
@@ -271,6 +221,29 @@ export default connect(
 )(Login);
 
 const styles = StyleSheet.create({
+	agreementText: {
+		textAlign: "center"
+	},
+	centeredFlex: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center"
+	},
+	logo: {
+		width: 150,
+		height: 150 / 1.24
+	},
+	flexSpaced: {
+		justifyContent: "space-between",
+		flex: 1,
+		alignItems: "center"
+	},
+	phoneInput: {
+		borderBottomWidth: 1,
+		width: width - 130,
+		fontSize: 18,
+		textAlign: "center"
+	},
 	appName: {
 		color: colors.white,
 		fontSize: 40
@@ -279,7 +252,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		flex: 1,
-		backgroundColor: colors.accent
+		backgroundColor: colors.white
 	},
 	inputWrapper: {
 		borderWidth: 1,
@@ -300,12 +273,12 @@ const styles = StyleSheet.create({
 	},
 	squareButtonContainer: {
 		borderRadius: 8,
-		width: 60,
-		height: 60,
+		width: 72,
+		height: 72,
 		justifyContent: "center",
 		alignItems: "center",
 		backgroundColor: colors.white,
-		margin: 5
+		margin: 8
 	},
 	infoWrapper: {
 		justifyContent: "center",
@@ -323,9 +296,11 @@ const styles = StyleSheet.create({
 		fontWeight: "bold"
 	},
 	text: {
-		color: colors.white,
+		color: colors.accent,
 		textAlign: "center",
-		margin: 5
+		margin: 5,
+		marginHorizontal: -30,
+		fontWeight: "100"
 	},
 	dangerText: {
 		color: colors.red,

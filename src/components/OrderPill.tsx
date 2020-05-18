@@ -48,7 +48,7 @@ const OrderPill = ({
 	navigation
 }: OrderProps & NavigationProps) => {
 	let [cardOn, setCardOn] = useState(false);
-	// console.warn(item);
+	console.warn(item.total_cost);
 	useEffect(() => {
 		setCardOn(collapsed);
 	}, [collapsed]);
@@ -106,23 +106,25 @@ const OrderPill = ({
 						}, "")
 					}
 				/>
-				<View style={styles.row}>
-					<Property
-						title={properties[3].title}
-						price={
-							!!item && item.total_cost
-								? item.total_cost
-								: properties[3].price
-						}
-					/>
-					<RoundButton
-						fill
-						full
-						text={strings.finish}
-						onPress={onStart}
-						backgroundColor={colors.yellow}
-					/>
-				</View>
+				<Property
+					title={strings.status}
+					rightText={strings[item.status]}
+				/>
+				{item.status === "accepted" && (
+					<View style={styles.row}>
+						<Property
+							title={properties[3].title}
+							price={item.total_cost}
+						/>
+						<RoundButton
+							fill
+							full
+							text={strings.finish}
+							onPress={onStart}
+							backgroundColor={colors.yellow}
+						/>
+					</View>
+				)}
 			</ScrollView>
 		</View>
 	);

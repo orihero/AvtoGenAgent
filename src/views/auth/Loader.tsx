@@ -2,11 +2,11 @@ import AsyncStorage from "@react-native-community/async-storage";
 import React, { useEffect } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { connect } from "react-redux";
-import logo from "../../assets/images/logo-light.png";
 import { colors } from "../../constants";
 import { userLoaded } from "../../redux/actions";
 import NotificationService from "../../../utils/NotificationService";
 import request from "../../api/requests";
+import logo from "../../assets/images/logo.png";
 
 const Loader = ({ navigation, userLoaded }) => {
 	let bootstrap = async () => {
@@ -52,11 +52,11 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: colors.accent
+		backgroundColor: colors.white
 	},
 	logo: {
 		width: 200,
-		height: 200 / 1.19
+		height: 200 / 1.24
 	}
 });
 
