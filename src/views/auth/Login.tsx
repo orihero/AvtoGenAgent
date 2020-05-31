@@ -147,6 +147,7 @@ const Login = ({ navigation, userLoggedIn }) => {
 					onFocus={onPhoneFocus}
 					value={!confirmed ? value : code}
 					keyboardType={"phone-pad"}
+					returnKeyType={"done"}
 					onChangeText={e => {
 						if (confirmed) {
 							setCode(e);
