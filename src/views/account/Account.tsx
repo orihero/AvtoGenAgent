@@ -75,7 +75,7 @@ const AccountScreen = ({
 				});
 			});
 		request.booking
-			.getAllOrders("accepted")
+			.getAllOrders("arrived")
 			.then(r => {
 				ordersLoaded({
 					name: "current",

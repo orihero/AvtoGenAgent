@@ -94,6 +94,9 @@ export default new LocalizedStrings({
 		canceled: "Отменен",
 		done: "Законченный",
 		rating: "Рейтинг",
-		comment: "Комментарий"
+		comment: "Комментарий",
+		car_model: "Модель автомобиля",
+		car_color: "Марка автомобиля",
+		car_number: "Номер машины"
 	}
 });

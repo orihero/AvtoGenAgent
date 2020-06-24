@@ -1,22 +1,21 @@
-import React, { useState, Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import {
-	View,
+	ActivityIndicator,
+	ScrollView,
 	StyleSheet,
 	TextInput,
-	ScrollView,
-	ActivityIndicator
+	View
 } from "react-native";
-import UserInfo from "../../components/common/UserInfo";
-import { colors, commonStyles } from "../../constants";
-import { OrderProps } from "../account/OrderCard";
+import { connect } from "react-redux";
+import request from "../../api/requests";
+import Text from "../../components/common/CustomText";
 import Property from "../../components/common/Property";
 import RoundButton from "../../components/common/RoundButton";
-import strings from "../../locales/strings";
-import Text from "../../components/common/CustomText";
+import UserInfo from "../../components/common/UserInfo";
 import { properties } from "../../components/OrderPill";
-import request from "../../api/requests";
+import { colors, commonStyles } from "../../constants";
+import strings from "../../locales/strings";
 import { ordersLoaded } from "../../redux/actions/orders";
-import { connect } from "react-redux";
 
 export enum OrderStatus {
 	INITIAL = 0,
@@ -37,14 +36,23 @@ const Details = ({ navigation, parentStatus, ordersLoaded }) => {
 		setLoading(true);
 		try {
 			let res = await request.booking.setStatus(item.id, status);
-			await fetchOrders();
+			setItem(res.data.data);
 			request.booking
-				.getAllOrders("accepted")
+				.getAllOrders("processing")
 				.then(r => {
-					ordersLoaded({
-						name: "current",
-						data: r.data.data
-					});
+					// ordersLoaded({ name: 'current', data: [...orders.current, ...res.data.data] })
+					request.booking
+						.getAllOrders("arrived")
+						.then(res => {
+							ordersLoaded({
+								name: "current",
+								data: [...res.data.data, ...r.data.data]
+							});
+						})
+						.catch(err => {
+							console.warn("error in booking");
+							console.warn(err.response);
+						});
 				})
 				.catch(err => {
 					console.warn("error in booking");
@@ -66,12 +74,21 @@ const Details = ({ navigation, parentStatus, ordersLoaded }) => {
 					ordersLoaded({ name: "new", data: r.data.data });
 					navigation.navigate("Account");
 					request.booking
-						.getAllOrders("accepted")
+						.getAllOrders("processing")
 						.then(r => {
-							ordersLoaded({
-								name: "current",
-								data: r.data.data
-							});
+							// ordersLoaded({ name: 'current', data: [...orders.current, ...res.data.data] })
+							request.booking
+								.getAllOrders("arrived")
+								.then(res => {
+									ordersLoaded({
+										name: "current",
+										data: [...res.data.data, ...r.data.data]
+									});
+								})
+								.catch(err => {
+									console.warn("error in booking");
+									console.warn(err.response);
+								});
 						})
 						.catch(err => {
 							console.warn("error in booking");
@@ -93,6 +110,27 @@ const Details = ({ navigation, parentStatus, ordersLoaded }) => {
 			request.booking.getAllOrders("new").then(r => {
 				ordersLoaded({ name: "new", data: r.data.data });
 				navigation.navigate("Account");
+				request.booking
+					.getAllOrders("processing")
+					.then(r => {
+						// ordersLoaded({ name: 'current', data: [...orders.current, ...res.data.data] })
+						request.booking
+							.getAllOrders("arrived")
+							.then(res => {
+								ordersLoaded({
+									name: "current",
+									data: [...res.data.data, ...r.data.data]
+								});
+							})
+							.catch(err => {
+								console.warn("error in booking");
+								console.warn(err.response);
+							});
+					})
+					.catch(err => {
+						console.warn("error in booking");
+						console.warn(err.response);
+					});
 			});
 		} catch (error) {
 			console.warn(error);
@@ -109,19 +147,28 @@ const Details = ({ navigation, parentStatus, ordersLoaded }) => {
 				request.booking.getAllOrders("new").then(r => {
 					ordersLoaded({ name: "new", data: r.data.data });
 					navigation.navigate("Account");
-				});
-				request.booking
-					.getAllOrders("accepted")
-					.then(r => {
-						ordersLoaded({
-							name: "current",
-							data: r.data.data
+					request.booking
+						.getAllOrders("processing")
+						.then(r => {
+							// ordersLoaded({ name: 'current', data: [...orders.current, ...res.data.data] })
+							request.booking
+								.getAllOrders("arrived")
+								.then(res => {
+									ordersLoaded({
+										name: "current",
+										data: [...res.data.data, ...r.data.data]
+									});
+								})
+								.catch(err => {
+									console.warn("error in booking");
+									console.warn(err.response);
+								});
+						})
+						.catch(err => {
+							console.warn("error in booking");
+							console.warn(err.response);
 						});
-					})
-					.catch(err => {
-						console.warn("error in booking");
-						console.warn(err.response);
-					});
+				});
 			})
 			.catch(res => {
 				console.warn(res.response);
@@ -154,10 +201,21 @@ const Details = ({ navigation, parentStatus, ordersLoaded }) => {
 						/>
 					</Fragment>
 				);
-			default:
+			case "arrived":
 				return (
 					<RoundButton
-						text={strings.ready}
+						text={strings.start}
+						fill
+						full
+						flex
+						onPress={() => proceed("processing")}
+						backgroundColor={colors.yellow}
+					/>
+				);
+			case "processing":
+				return (
+					<RoundButton
+						text={strings.finish}
 						fill
 						full
 						flex
@@ -165,6 +223,19 @@ const Details = ({ navigation, parentStatus, ordersLoaded }) => {
 						backgroundColor={colors.yellow}
 					/>
 				);
+			case "done":
+				return (
+					<RoundButton
+						text={strings.ready}
+						fill
+						full
+						flex
+						onPress={fetchOrders}
+						backgroundColor={colors.yellow}
+					/>
+				);
+			default:
+				return null;
 		}
 	};
 	if (loading) {
@@ -222,6 +293,18 @@ const Details = ({ navigation, parentStatus, ordersLoaded }) => {
 								? item.total_cost
 								: properties[3].price
 						}
+					/>
+					<Property
+						title={strings.car_model}
+						price={item.car_model}
+					/>
+					<Property
+						title={strings.car_number}
+						price={item.car_number}
+					/>
+					<Property
+						title={strings.car_color}
+						price={item.car_color}
 					/>
 				</View>
 				{status === OrderStatus.FINISHED && (

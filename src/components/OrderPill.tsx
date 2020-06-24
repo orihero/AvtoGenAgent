@@ -48,7 +48,6 @@ const OrderPill = ({
 	navigation
 }: OrderProps & NavigationProps) => {
 	let [cardOn, setCardOn] = useState(false);
-	console.warn(item.total_cost);
 	useEffect(() => {
 		setCardOn(collapsed);
 	}, [collapsed]);
@@ -56,13 +55,13 @@ const OrderPill = ({
 	let onStart = () => {
 		navigation.navigate("Details", { item });
 	};
-	console.log(item);
 	return (
 		<View
 			style={[
 				styles.container,
 				{
-					height: cardOn ? 100 : null
+					height: cardOn ? 100 : null,
+					marginBottom: 30
 				}
 			]}
 		>
@@ -106,6 +105,9 @@ const OrderPill = ({
 						}, "")
 					}
 				/>
+				<Property title={strings.car_model} price={item.car_model} />
+				<Property title={strings.car_number} price={item.car_number} />
+				<Property title={strings.car_color} price={item.car_color} />
 				<Property
 					title={strings.status}
 					rightText={strings[item.status]}
@@ -122,7 +124,7 @@ const OrderPill = ({
 						/>
 					</>
 				)}
-				{item.status === "accepted" && (
+				{item.status === "arrived" && (
 					<View style={styles.row}>
 						<Property
 							title={properties[3].title}
