@@ -2,6 +2,7 @@ import LocalizedStrings from "react-native-localization";
 
 export default new LocalizedStrings({
 	ru: {
+		arrived: "Прибыл",
 		firstSlider: "Ручная мойка кузова нано шампунем",
 		secondSlider:
 			"Чистка салона пылесосом и влажная уборка пластмассовых деталей",
@@ -52,8 +53,8 @@ export default new LocalizedStrings({
 		somethingWentWrong: "Что то пошло не так!",
 		fillAllFields: "Заполните все поля",
 		active: "Активен",
-		orders: "Текущие заказы",
-		decline: "Откланить",
+		orders: "Прибывшие машины",
+		decline: "Отклонить",
 		details: "Детали",
 		accept: "Принять",
 		order: "Заявка",

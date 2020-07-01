@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between"
 	},
 	ordersText: {
-		color: colors.accent,
+		color: colors.red,
 		fontSize: 16,
 		fontWeight: "bold",
 		paddingVertical: 15,

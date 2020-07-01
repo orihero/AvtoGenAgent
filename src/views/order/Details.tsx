@@ -204,11 +204,11 @@ const Details = ({ navigation, parentStatus, ordersLoaded }) => {
 			case "arrived":
 				return (
 					<RoundButton
-						text={strings.start}
+						text={strings.finish}
 						fill
 						full
 						flex
-						onPress={() => proceed("processing")}
+						onPress={() => proceed("done")}
 						backgroundColor={colors.yellow}
 					/>
 				);
